@@ -9,3 +9,7 @@ Candidate paths to inspect by hand:
 
 - `uninstrumented/coupling_audit`
 - `cross-model-calibration-toolkit`
+
+## Open question
+
+Whether curse of dimensionality, the worst-case/average-case gap, uncomputability, and entropy subjectivity are one shape under four names, or convergent structure arriving from different constraints. Not settled here. The four are carried as instances of `occupied_set_vs_space` on the first reading; the second reading would split them, and nothing in the entry currently discriminates between the two.
