@@ -13,8 +13,24 @@ Absence of a term in a literature is not absence of the structure. Every null re
 
 The matching threshold is uncalibrated. Slot overlap is scored by token
 intersection over union, and the cutoff above which a slot is reported as matched
-is a reporting convenience chosen without evidence. Token overlap also rewards
-shared phrasing, which is the failure mode the index is supposed to avoid: two
-entries written by the same hand will score higher than two entries describing the
-same structure in unrelated words. Until entries are written by different people,
-the score is measuring the indexer as much as the shape.
+is a reporting convenience chosen without evidence.
+
+Only the switch-and-gate pair is typed. `flows`, `held_constant`, and `units`
+remain free text and are therefore still matched as vocabulary: the seed's own
+two instances score 0.00 on every one of them while describing the same
+structure. That is why the seed's self-check reaches 0.75 structurally and not
+1.00 — the untyped slots contribute nothing. Whether those slots should also be
+typed, and by what terms, is open. Typing `flows` by conserved quantity is the
+obvious candidate, since conservation is the premise's own example of a
+shape-generating constraint, but it has not been tried.
+
+The controlled term lists are model-proposed and untested. `GateType` in
+particular — AVAILABILITY, DEMAND, THRESHOLD, PHASE, STATE — is one person's cut
+at a taxonomy that ought to come from reading entries, not from writing a schema.
+The lists will be wrong in ways that only show up when a shape refuses to fit, and
+a shape that refuses to fit is evidence about the list, not about the shape.
+
+The typed slots move the problem rather than dissolving it. Whoever assigns
+`gate_type` is doing the reading that the match then reports, so the index records
+a judgement, not a measurement. Two people typing the same instance differently is
+the test that matters and has not been run.

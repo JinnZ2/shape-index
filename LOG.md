@@ -27,3 +27,34 @@ two entries with the same words and a transposed switch-and-gate must not.
 
 `CLAUDE.md` added: the working constraints, the entry-writing conventions, and the
 things not to build here.
+
+## 2026-08-21 (third)
+
+Review found the matcher was still lexical. Token overlap inside a slot escapes
+matching what the fields call the shape and starts matching what the indexer
+calls the slots — one level down the same trap. Run against the seed's own two
+instrumented instances, worded as anthropology and zooarchaeology would each word
+them, the founding example scored 0.0952 against itself, and the only shared token
+was the English word "intensity". The repository's own example did not match
+itself.
+
+The check could not be run inside the repository at all: instances carried a
+citation and an instrument but no slots, so no per-domain filling was ever
+recorded and nothing compared one instance to another. A passing suite that never
+runs entry-against-entry does not test the thing.
+
+Repaired. `Instance.signature` records each field's own filling of the slots, in
+that field's words, and is `None` where a field has no name for the shape.
+The switch-and-gate pair is typed: `gate_type`, `switch_direction`,
+`switch_periodicity`, from controlled vocabularies. Matching now scores a
+structural layer and a lexical layer and reports them separately. The seed against
+itself: structural 0.75, lexical 0.04, with the one structural disagreement —
+aperiodic household surplus against periodic foddering — surfaced rather than
+averaged away.
+
+`CONSTRAINT_IDENTIFIED` now requires `constraint_stated=True`, enforced in the
+schema. The status had been documented as covering a constraint "argued or
+asserted", which discarded the field that exists to separate those. An asserted
+but unargued constraint is recorded and stays `MULTI_DOMAIN`.
+
+Also enforced: no file carries an author-profile or working-style heading.

@@ -56,6 +56,20 @@ An entry is a claim about structure and is judged as one.
   units), what switches, what the switch is gated on, what is held constant
   through the switch. Write the slots so that a reader from either domain could
   recognise the structure without recognising the wording.
+- **The switch-and-gate pair is typed.** `gate_type`, `switch_direction`, and
+  `switch_periodicity` come from the controlled vocabularies in `schema.py` and
+  are the only slots that carry structural weight in matching. Free text is
+  filled in the vocabulary of whoever writes the entry, so scoring it as
+  structure would reproduce the vocabulary trap one level down. Leave a typed
+  slot `UNSPECIFIED` rather than guessing; unspecified on both sides is treated
+  as incomparable, not as agreement.
+- **Record each instrumented instance's own filling of the slots** in
+  `Instance.signature`, in that field's words. This is what makes an entry
+  checkable against itself: `self_consistency()` compares every pair of
+  instrumented instances, and an entry whose own instances do not match
+  structurally is making a claim the index cannot see. An instance whose field
+  has no name and no filling for the shape keeps `signature=None`; that absence
+  is the observation, not a gap to invent into.
 - `constraint` is the physical constraint proposed to generate the shape, or
   `None`. `None` is an acceptable, honest value. Set `constraint_stated=True`
   only when the constraint is *argued*, not merely asserted; the schema rejects
@@ -70,17 +84,28 @@ An entry is a claim about structure and is judged as one.
 - `discriminator` states the measurement that would separate this shape from its
   nearest rival explanation. An entry without one is not testable.
 - `status` is one of `CANDIDATE`, `MULTI_DOMAIN`, `CONSTRAINT_IDENTIFIED`,
-  `BROKEN`. `provenance` is `AUTHORED` or `MODEL_SEEDED`; anything a model
-  proposed is `MODEL_SEEDED` and stays that way until a person has read the
-  sources.
+  `BROKEN`. `CONSTRAINT_IDENTIFIED` requires `constraint_stated=True` and the
+  schema enforces it: an asserted but unargued constraint is recorded on the
+  entry and the entry stays `MULTI_DOMAIN`. `provenance` is `AUTHORED` or
+  `MODEL_SEEDED`; anything a model proposed is `MODEL_SEEDED` and stays that way
+  until a person has read the sources.
 
 ## Matching
 
-`match.py` scores field-wise overlap of the signature and constraint slots. It
-never compares `shape_id`, domain labels, field names, or citations — matching
-on those would reproduce the exclusion mechanism the index exists to route
-around. The switch-and-gate pair carries the most weight, held-constant next,
-units least.
+`match.py` scores two layers and keeps them apart. The **structural** layer
+compares the typed switch-and-gate slots by identity; the gate carries the most
+weight, then the two switch descriptors. The **lexical** layer compares the
+free-text slots by token overlap; held-constant and constraint lead, units and
+the free-text switch and gate trail.
+
+Never collapse the two into one number in an API or in prose. The blended
+`score` exists only to order a ranked list; `structural_score` and
+`lexical_score` are the reportable ones, and an entry that scores high
+structurally and near zero lexically is the case this index exists for.
+
+`match.py` never compares `shape_id`, domain labels, field names, or citations —
+matching on those would reproduce the exclusion mechanism the index exists to
+route around.
 
 Every result carries the per-slot overlap that produced it. **Do not add an API
 that returns a similarity number alone.** A high overlap is a prompt to check,
