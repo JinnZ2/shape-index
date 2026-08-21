@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: CC0-1.0
-# This file is dedicated to the public domain under CC0 1.0.
+<!-- SPDX-License-Identifier: CC0-1.0 -->
+<!-- This file is dedicated to the public domain under CC0 1.0. -->
 
 # shape-index
 
@@ -22,6 +22,7 @@ The generating premise is stated as a premise, not a conclusion: where domains a
 | `FALSIFIER.md` | Conditions that break an entry without deleting its failure record. |
 | `OPEN.md` | Explicit limits and unanswered questions. |
 | `LOG.md` | Dated provenance of the repository opening. |
+| `CLAUDE.md` | Working constraints for anyone, human or model, editing this repository. |
 
 ## Status values
 
@@ -35,7 +36,7 @@ The project uses only the Python standard library and parses under Python 3.9. T
 python3 -m unittest -v
 ```
 
-Matching returns ranked candidates together with the slots that matched. **A high signature overlap is a prompt to check, not a finding. The tool proposes; the reading is done by a person.**
+Matching scores field-wise token overlap of the signature and constraint slots and returns ranked candidates together with the per-slot evidence that produced each score: what overlapped, and what did not. It never compares shape ids, field names, citations, or domain labels, because matching on those reproduces the exclusion mechanism the index exists to route around. `explain()` renders a result slot by slot so a match can be rejected on sight. **A high signature overlap is a prompt to check, not a finding. The tool proposes; the reading is done by a person.**
 
 The repository cross-references `uninstrumented/coupling_audit` and the cross-model calibration toolkit as reading locations rather than claiming that those materials have already been incorporated.
 

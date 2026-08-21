@@ -1,0 +1,105 @@
+<!-- SPDX-License-Identifier: CC0-1.0 -->
+<!-- This file is dedicated to the public domain under CC0 1.0. -->
+
+# CLAUDE.md
+
+Guidance for working in this repository.
+
+## What this repository is
+
+An index of structural signatures that recur across domains under different
+names. **The searchable unit is the shape, not the vocabulary.** It is an
+instrument to be tested and broken, not a thesis under defense.
+
+The generating premise is recorded as a premise, not a conclusion: where two
+domains are downstream of the same physical constraint — conservation, a
+gradient, a rate limit, a boundary condition — the admissible geometry is the
+same, the divergent names come from the fields, and the shape comes from the
+constraint. The index therefore records the constraint as a field. An entry
+with no identifiable constraint is weaker evidence than one with a stated
+constraint, and the schema shows that difference rather than hiding it.
+
+## Hard constraints
+
+These are not preferences. Do not relax them without being asked.
+
+- **Standard library only.** No third-party imports, anywhere, including tests.
+- **Must parse under Python 3.9.** No PEP 604 unions (`int | None`), no builtin
+  generics in annotations (`list[str]`), no `match` statements, no
+  `dataclasses(slots=True)`. `test_shape_index.py` enforces this by compiling
+  every source file with `ast.parse(..., feature_version=(3, 9))`.
+- **CC0 header on every file.** SPDX identifier plus the dedication line, as a
+  comment in the file's own comment syntax (`#` for Python and `.gitignore`,
+  `<!-- -->` for Markdown). Once per file, at the top. `LICENSE` is the CC0
+  text itself and carries no separate header.
+- **No dependencies, no network calls, no build step.** Tests run with
+  `python3 -m unittest -v` from the repository root and nothing else.
+- **No author-profile, working-style, or about-the-human section** in any file.
+
+## Layout
+
+| Path | Role |
+| --- | --- |
+| `shape_index/schema.py` | The entry record. Field definitions and validation. |
+| `shape_index/match.py` | Signature matching. Explainable, slot-wise, never name-wise. |
+| `shape_index/entries.py` | The index itself. Currently one `MODEL_SEEDED` entry. |
+| `CANDIDATES.md` | Paths to repositories holding probable entries. Paths only. |
+| `FALSIFIER.md` | What breaks an entry. |
+| `OPEN.md` | Stated limits and unanswered questions. |
+| `LOG.md` | Dated record of what happened, in order. |
+
+## Writing an entry
+
+An entry is a claim about structure and is judged as one.
+
+- The `signature` slots record structure, not names: what flows (quantity and
+  units), what switches, what the switch is gated on, what is held constant
+  through the switch. Write the slots so that a reader from either domain could
+  recognise the structure without recognising the wording.
+- `constraint` is the physical constraint proposed to generate the shape, or
+  `None`. `None` is an acceptable, honest value. Set `constraint_stated=True`
+  only when the constraint is *argued*, not merely asserted; the schema rejects
+  `constraint_stated=True` with no constraint.
+- Each `Instance` records the domain, that field's own name for the shape, the
+  measurement instrument used there, its units, a citation, and the scale it was
+  observed at. Instances are cited sources, not authored claims — do not write an
+  instance you cannot cite.
+- `scale` matters because the same shape sampled at different resolutions is
+  routinely mistaken for three different shapes. Record the per-instance scale on
+  the instance; the entry-level `scale` is a summary of them.
+- `discriminator` states the measurement that would separate this shape from its
+  nearest rival explanation. An entry without one is not testable.
+- `status` is one of `CANDIDATE`, `MULTI_DOMAIN`, `CONSTRAINT_IDENTIFIED`,
+  `BROKEN`. `provenance` is `AUTHORED` or `MODEL_SEEDED`; anything a model
+  proposed is `MODEL_SEEDED` and stays that way until a person has read the
+  sources.
+
+## Matching
+
+`match.py` scores field-wise overlap of the signature and constraint slots. It
+never compares `shape_id`, domain labels, field names, or citations — matching
+on those would reproduce the exclusion mechanism the index exists to route
+around. The switch-and-gate pair carries the most weight, held-constant next,
+units least.
+
+Every result carries the per-slot overlap that produced it. **Do not add an API
+that returns a similarity number alone.** A high overlap is a prompt to check,
+not a finding: the tool proposes, the reading is done by a person.
+
+## Breaking an entry
+
+Broken entries are not deleted. Mark `status=BROKEN` and leave the entry in
+place — the failure record is the calibration. See `FALSIFIER.md` for what
+counts as broken.
+
+## Things not to do here
+
+- Do not add a scraper, an importer, or anything that implies the index can be
+  populated automatically. Population is bounded by people who can read both
+  literatures; the repository must not claim otherwise.
+- Do not upgrade a `CANDIDATE` to `MULTI_DOMAIN` or `CONSTRAINT_IDENTIFIED`
+  because the wording of two entries is similar. Linguistic similarity with a
+  different switch-and-gate structure is a `BROKEN` entry, not a match.
+- Do not restate the premise as a conclusion in prose. It is a premise.
+- Do not record a null result without recording which vocabulary was searched.
+  Absence of a term in a literature is not absence of the structure.

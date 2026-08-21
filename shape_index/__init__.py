@@ -4,7 +4,7 @@
 """A small, inspectable index of recurring structural signatures."""
 
 from .entries import ENTRIES, SUPPLY_COUPLED_DRAW
-from .match import MatchResult, compare, rank_candidates
+from .match import MatchResult, SlotOverlap, compare, explain, rank_candidates
 from .schema import Instance, Provenance, ShapeEntry, Signature, Status
 
 __all__ = [
@@ -15,7 +15,9 @@ __all__ = [
     "Provenance",
     "ShapeEntry",
     "Signature",
+    "SlotOverlap",
     "Status",
     "compare",
+    "explain",
     "rank_candidates",
 ]
