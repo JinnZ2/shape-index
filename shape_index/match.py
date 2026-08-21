@@ -95,6 +95,19 @@ class MatchResult:
 
         return tuple(entry for entry in self.slots if entry.layer == name)
 
+    def support(self, name: str) -> int:
+        """How many comparable slots a layer's score actually rests on.
+
+        A layer score of 1.0 carries very different weight depending on
+        whether three slots agreed or one did, and the score alone cannot
+        say which. Reporting the score without its support reproduces, one
+        level down, the collapse this module refuses everywhere else: a
+        single number standing in for evidence a reader should be able to
+        weigh. Always read a layer score against its support.
+        """
+
+        return len(self.layer(name))
+
 
 def _tokens(value: object) -> Tuple[str, ...]:
     cleaned = []
@@ -278,9 +291,19 @@ def explain(result: MatchResult) -> str:
 
     lines = [
         "%s" % (result.shape_id or "(unlabelled)"),
-        "  structural=%.4f  lexical=%.4f  blended=%.4f"
-        % (result.structural_score, result.lexical_score, result.score),
+        "  structural=%.4f on %d slot(s)   lexical=%.4f on %d slot(s)"
+        % (result.structural_score, result.support("structural"),
+           result.lexical_score, result.support("lexical")),
+        "  blended=%.4f" % result.score,
     ]
+    if result.support("structural") == 1:
+        lines.append(
+            "  NOTE: the structural score rests on ONE slot. It cannot "
+            "distinguish"
+        )
+        lines.append(
+            "  agreement from absence of anything to disagree about."
+        )
     for layer in ("structural", "lexical"):
         slots = result.layer(layer)
         if not slots:

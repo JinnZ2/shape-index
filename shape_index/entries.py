@@ -300,4 +300,194 @@ OCCUPIED_SET_VS_SPACE = ShapeEntry.from_instances(
 )
 
 
-ENTRIES = (SUPPLY_COUPLED_DRAW, OCCUPIED_SET_VS_SPACE)
+# ---------------------------------------------------------------------------
+# independence_credited_vs_joint
+#
+# This entry sits close to occupied_set_vs_space and is kept separate on the
+# strength of its discriminator, not on the strength of its wording. Both
+# switch a count on whether a relation is present in the formalism, and both
+# switch DECREASE. What separates them is what closes the gap:
+#
+#   occupied_set_vs_space   adding the omitted constraint closes the gap with
+#                           the physics untouched. The fix is representational.
+#                           The coordinates had invented freedom that was
+#                           never there.
+#
+#   this entry              adding the omitted coupling does NOT return the
+#                           credited quantity. Writing the channel into the
+#                           model tells you the truth; it does not restore the
+#                           independence. The fix is physical -- separate the
+#                           rails, split the pump -- or there is no fix.
+#
+# If that discriminator fails, these are one shape and this entry should be
+# folded into the other as further instances rather than left standing.
+#
+# gate_type is UNSPECIFIED again, for the same reason as occupied_set_vs_space:
+# the gate is "whether a relation is represented in the model", and no term in
+# GateType names a property of the representation. That is now two of three
+# entries the controlled vocabulary cannot type. See OPEN.md.
+
+_ENTROPY_SOURCE_SIGNATURE = Signature(
+    flows="min-entropy, in bits per sample",
+    switches="entropy credited: sum over legs versus the joint distribution",
+    gated_on="whether the shared bath coupling the legs is in the model",
+    held_constant="each leg's own noise process",
+    units="bits of min-entropy",
+    switch_direction=SwitchDirection.DECREASE,
+    switch_periodicity=SwitchPeriodicity.UNSPECIFIED,
+    gate_type=GateType.UNSPECIFIED,
+)
+
+_REDUNDANCY_SIGNATURE = Signature(
+    flows="failure probability, per demand",
+    switches="redundancy credited: product over channels versus joint failure",
+    gated_on="whether the common cause is in the fault tree",
+    held_constant="each channel's own failure rate",
+    units="probability per demand, beta factor",
+    switch_direction=SwitchDirection.DECREASE,
+    switch_periodicity=SwitchPeriodicity.UNSPECIFIED,
+    gate_type=GateType.UNSPECIFIED,
+)
+
+_SAMPLE_SIZE_SIGNATURE = Signature(
+    flows="information, in independent observations",
+    switches="observations credited: raw count versus effective sample size",
+    gated_on="whether the clustering or autocorrelation is in the design",
+    held_constant="each observation's own measurement",
+    units="observations, design effect",
+    switch_direction=SwitchDirection.DECREASE,
+    switch_periodicity=SwitchPeriodicity.UNSPECIFIED,
+    gate_type=GateType.UNSPECIFIED,
+)
+
+
+INDEPENDENCE_CREDITED_VS_JOINT = ShapeEntry.from_instances(
+    shape_id="independence_credited_vs_joint",
+    signature=Signature(
+        flows="independent degrees of freedom, counted in components or bits",
+        switches=(
+            "the count being credited: the sum over the parts versus the "
+            "joint state of the parts"
+        ),
+        gated_on=(
+            "whether the channel coupling the parts is represented in the "
+            "model"
+        ),
+        held_constant=(
+            "the parts and their individual behaviour, unchanged across both "
+            "counts"
+        ),
+        units="components, bits of min-entropy, effective sample size",
+        switch_direction=SwitchDirection.DECREASE,
+        switch_periodicity=SwitchPeriodicity.UNSPECIFIED,
+        gate_type=GateType.UNSPECIFIED,
+    ),
+    constraint=(
+        "a shared channel is a physical path. Where two parts couple to one "
+        "bath, their joint state carries fewer degrees of freedom than the "
+        "sum of their separate states, and no accounting that omits the "
+        "channel recovers the difference. The omission is in the model; the "
+        "coupling is in the world. This is why the correction is not "
+        "symmetric with occupied_set_vs_space: there the surplus was an "
+        "artifact of the coordinates and removing it costs nothing, here the "
+        "deficit is in the apparatus and only the apparatus can return it."
+    ),
+    constraint_stated=True,
+    instances=(
+        Instance(
+            domain="hardware entropy sources",
+            field_name="correlated drift; shared noise floor",
+            instrument="cross-correlation under driven bath perturbation",
+            units="bits of min-entropy",
+            citation=(
+                "Chor & Goldreich 1988, SIAM J Comput 17:230, for two-source "
+                "extraction requiring independence; NIST SP 800-90B for "
+                "min-entropy accounting under non-IID sources. Worked in "
+                "qrng-pair-search/ in this ecosystem."
+            ),
+            scale="board / device",
+            signature=_ENTROPY_SOURCE_SIGNATURE,
+        ),
+        Instance(
+            domain="reliability engineering",
+            field_name="common-cause failure",
+            instrument="beta-factor model; common-cause failure database",
+            units="probability per demand, beta factor",
+            citation=(
+                "Fleming 1975, Proc 6th Pittsburgh Conf on Modeling and "
+                "Simulation, for the beta-factor model; IEC 61508; "
+                "NUREG/CR-6268 common-cause failure database. Nominal "
+                "redundancy N against a much smaller effective redundancy."
+            ),
+            scale="plant / safety system",
+            signature=_REDUNDANCY_SIGNATURE,
+        ),
+        Instance(
+            domain="survey statistics",
+            field_name="design effect; effective sample size",
+            instrument="deff estimation from cluster and weight structure",
+            units="observations, design effect",
+            citation=(
+                "Kish 1965, Survey Sampling. n_eff = n / deff; clustered "
+                "observations are credited as n and carry the information of "
+                "n_eff."
+            ),
+            scale="survey / cluster",
+            signature=_SAMPLE_SIZE_SIGNATURE,
+        ),
+        Instance(
+            domain="metrology",
+            field_name="correlated systematic uncertainty",
+            instrument="covariance matrix over input quantities",
+            units="combined standard uncertainty",
+            citation=(
+                "BIPM JCGM 100:2008 (GUM), clauses on correlated input "
+                "quantities; CODATA adjustments carry the full covariance "
+                "matrix because measurements sharing a calibration standard "
+                "are not independent inputs."
+            ),
+            scale="instrument / laboratory",
+            # No signature: the slot filling for this instance was not
+            # supplied and is not transcribable from the citation alone.
+            signature=None,
+        ),
+        Instance(
+            domain="measurement language",
+            field_name="category weld",
+            instrument="component divergence cases per term",
+            units="n_cases, divergence span",
+            citation=(
+                "category-weld/MECHANISM_09.md in this ecosystem. A term "
+                "fusing two or more independent quantities into one handle, "
+                "where components move to opposite extremes without the "
+                "record moving. The channel here is the language, not a bath."
+            ),
+            scale="term / record",
+            signature=None,
+        ),
+    ),
+    scale=(
+        "spans device to survey population; the shape is scale-free with "
+        "respect to the domains listed"
+    ),
+    discriminator=(
+        "after the omitted coupling is written into the model, does the "
+        "credited quantity return? If it returns, the gap was representational "
+        "and the case belongs to occupied_set_vs_space. If it does not return, "
+        "and only a change to the apparatus recovers it -- separate rails, "
+        "split pump, decluster the sample -- the case belongs here. Nearest "
+        "rival explanation is that these are one shape and the two directions "
+        "are a story told about it; the measurement that separates them is "
+        "whether any re-representation restores the credited independence. A "
+        "case where it does breaks this entry."
+    ),
+    status=Status.MULTI_DOMAIN,
+    provenance=Provenance.MODEL_SEEDED,
+)
+
+
+ENTRIES = (
+    SUPPLY_COUPLED_DRAW,
+    OCCUPIED_SET_VS_SPACE,
+    INDEPENDENCE_CREDITED_VS_JOINT,
+)

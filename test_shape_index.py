@@ -362,6 +362,32 @@ class MatchTests(unittest.TestCase):
         ranked = rank_candidates(SUPPLY_COUPLED_DRAW, (SUPPLY_COUPLED_DRAW, other))
         self.assertEqual([result.shape_id for result in ranked], ["other"])
 
+    def test_support_reports_how_many_slots_a_layer_rests_on(self):
+        # Two, not three: the seed's entry-level switch_periodicity is
+        # deliberately UNSPECIFIED because its own instances disagree on it,
+        # and unspecified on both sides is incomparable rather than agreed.
+        result = compare(SUPPLY_COUPLED_DRAW, SUPPLY_COUPLED_DRAW)
+        self.assertEqual(result.support("structural"), 2)
+        self.assertEqual(
+            result.support("lexical"), len(result.layer("lexical")))
+        self.assertEqual(result.support("nonexistent"), 0)
+
+    def test_a_one_slot_structural_score_is_flagged_in_explain(self):
+        """1.0 on one slot and 1.0 on three slots are not the same evidence."""
+        left = _signature("a", "b", "c", "d", "e",
+                          direction=SwitchDirection.DECREASE)
+        right = _signature("v", "w", "x", "y", "z",
+                           direction=SwitchDirection.DECREASE)
+        result = compare_signatures(left, right)
+        self.assertEqual(result.structural_score, 1.0)
+        self.assertEqual(result.support("structural"), 1)
+        self.assertIn("ONE slot", explain(result))
+
+    def test_a_multi_slot_structural_score_is_not_flagged(self):
+        result = compare(SUPPLY_COUPLED_DRAW, SUPPLY_COUPLED_DRAW)
+        self.assertGreater(result.support("structural"), 1)
+        self.assertNotIn("ONE slot", explain(result))
+
     def test_explain_shows_both_layers_and_the_guard(self):
         text = explain(compare(SUPPLY_COUPLED_DRAW, SUPPLY_COUPLED_DRAW))
         self.assertIn("structural", text)
