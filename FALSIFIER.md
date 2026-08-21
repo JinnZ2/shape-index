@@ -1,10 +1,7 @@
-# SPDX-License-Identifier: CC0-1.0
-# This file is dedicated to the public domain under CC0 1.0.
+<!-- SPDX-License-Identifier: CC0-1.0 -->
+<!-- This file is dedicated to the public domain under CC0 1.0. -->
 
 # Falsifier
-
-# SPDX-License-Identifier: CC0-1.0
-# This file is dedicated to the public domain under CC0 1.0.
 
 An entry breaks when its apparent recurrence is explained better by transmission, by a different constraint, or by a different structural signature.
 
