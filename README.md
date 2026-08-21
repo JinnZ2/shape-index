@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: CC0-1.0
+# This file is dedicated to the public domain under CC0 1.0.
+
 # shape-index
 
 > The searchable unit is the shape, not the vocabulary.
