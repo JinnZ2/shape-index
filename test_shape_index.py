@@ -6,9 +6,14 @@ import os
 import re
 import unittest
 
-from shape_index.entries import SUPPLY_COUPLED_DRAW
+from shape_index.entries import (
+    INDEPENDENCE_CREDITED_VS_JOINT,
+    OCCUPIED_SET_VS_SPACE,
+    SUPPLY_COUPLED_DRAW,
+)
 from shape_index.match import (
     MATCH_THRESHOLD,
+    STRUCTURAL_WEIGHTS,
     compare,
     compare_signatures,
     explain,
@@ -16,6 +21,7 @@ from shape_index.match import (
     self_consistency,
 )
 from shape_index.schema import (
+    ClosureMode,
     GateType,
     Instance,
     Provenance,
@@ -171,6 +177,51 @@ class SelfConsistencyTests(unittest.TestCase):
         self.assertNotIn("switch_periodicity", result.matched_slots)
 
 
+class DiscriminatorTests(unittest.TestCase):
+    """The two entries the free-text discriminator was separating alone."""
+
+    def test_both_entries_type_under_the_representation_gate(self):
+        self.assertEqual(OCCUPIED_SET_VS_SPACE.signature.gate_type,
+                         GateType.REPRESENTATION)
+        self.assertEqual(INDEPENDENCE_CREDITED_VS_JOINT.signature.gate_type,
+                         GateType.REPRESENTATION)
+
+    def test_closure_mode_carries_the_separation(self):
+        self.assertEqual(OCCUPIED_SET_VS_SPACE.signature.closure_mode,
+                         ClosureMode.REPRESENTATIONAL)
+        self.assertEqual(INDEPENDENCE_CREDITED_VS_JOINT.signature.closure_mode,
+                         ClosureMode.PHYSICAL)
+
+    def test_the_two_entries_no_longer_score_identical(self):
+        result = compare(INDEPENDENCE_CREDITED_VS_JOINT, OCCUPIED_SET_VS_SPACE)
+        self.assertLess(result.structural_score, 1.0)
+        self.assertGreater(result.support("structural"), 1)
+        self.assertNotIn("closure_mode", result.matched_slots)
+        self.assertIn("gate_type", result.matched_slots)
+
+    def test_closure_mode_is_weighted_like_the_gate(self):
+        """The discriminating slot cannot be outvoted by the agreeing ones."""
+        self.assertEqual(STRUCTURAL_WEIGHTS["closure_mode"],
+                         STRUCTURAL_WEIGHTS["gate_type"])
+
+    def test_closure_mode_alone_can_split_an_otherwise_identical_pair(self):
+        base = dict(direction=SwitchDirection.DECREASE,
+                    gate=GateType.REPRESENTATION)
+        left = _signature("a", "b", "c", "d", "e",
+                          closure=ClosureMode.REPRESENTATIONAL, **base)
+        right = _signature("a", "b", "c", "d", "e",
+                           closure=ClosureMode.PHYSICAL, **base)
+        same = _signature("a", "b", "c", "d", "e",
+                          closure=ClosureMode.REPRESENTATIONAL, **base)
+        self.assertEqual(compare_signatures(left, same).structural_score, 1.0)
+        self.assertLess(compare_signatures(left, right).structural_score, 1.0)
+
+    def test_unspecified_closure_stays_incomparable(self):
+        left = _signature("a", "b", "c", "d", "e")
+        right = _signature("a", "b", "c", "d", "e")
+        self.assertEqual(compare_signatures(left, right).layer("structural"), ())
+
+
 class SchemaTests(unittest.TestCase):
     def test_unstated_constraint_is_allowed(self):
         entry = ShapeEntry(
@@ -226,9 +277,11 @@ class SchemaTests(unittest.TestCase):
 def _signature(flows, switches, gated_on, held_constant, units,
                direction=SwitchDirection.UNSPECIFIED,
                periodicity=SwitchPeriodicity.UNSPECIFIED,
-               gate=GateType.UNSPECIFIED):
+               gate=GateType.UNSPECIFIED,
+               closure=ClosureMode.UNSPECIFIED):
     return Signature(
-        flows, switches, gated_on, held_constant, units, direction, periodicity, gate
+        flows, switches, gated_on, held_constant, units, direction,
+        periodicity, gate, closure,
     )
 
 
@@ -361,6 +414,32 @@ class MatchTests(unittest.TestCase):
         other = _entry("other", _signature("a", "b", "c", "d", "e"))
         ranked = rank_candidates(SUPPLY_COUPLED_DRAW, (SUPPLY_COUPLED_DRAW, other))
         self.assertEqual([result.shape_id for result in ranked], ["other"])
+
+    def test_support_reports_how_many_slots_a_layer_rests_on(self):
+        # Two, not three: the seed's entry-level switch_periodicity is
+        # deliberately UNSPECIFIED because its own instances disagree on it,
+        # and unspecified on both sides is incomparable rather than agreed.
+        result = compare(SUPPLY_COUPLED_DRAW, SUPPLY_COUPLED_DRAW)
+        self.assertEqual(result.support("structural"), 2)
+        self.assertEqual(
+            result.support("lexical"), len(result.layer("lexical")))
+        self.assertEqual(result.support("nonexistent"), 0)
+
+    def test_a_one_slot_structural_score_is_flagged_in_explain(self):
+        """1.0 on one slot and 1.0 on three slots are not the same evidence."""
+        left = _signature("a", "b", "c", "d", "e",
+                          direction=SwitchDirection.DECREASE)
+        right = _signature("v", "w", "x", "y", "z",
+                           direction=SwitchDirection.DECREASE)
+        result = compare_signatures(left, right)
+        self.assertEqual(result.structural_score, 1.0)
+        self.assertEqual(result.support("structural"), 1)
+        self.assertIn("ONE slot", explain(result))
+
+    def test_a_multi_slot_structural_score_is_not_flagged(self):
+        result = compare(SUPPLY_COUPLED_DRAW, SUPPLY_COUPLED_DRAW)
+        self.assertGreater(result.support("structural"), 1)
+        self.assertNotIn("ONE slot", explain(result))
 
     def test_explain_shows_both_layers_and_the_guard(self):
         text = explain(compare(SUPPLY_COUPLED_DRAW, SUPPLY_COUPLED_DRAW))

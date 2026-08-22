@@ -58,3 +58,58 @@ asserted", which discarded the field that exists to separate those. An asserted
 but unargued constraint is recorded and stays `MULTI_DOMAIN`.
 
 Also enforced: no file carries an author-profile or working-style heading.
+
+## 2026-08-22
+
+`AUDIT_CONTRACT.md` added, governing report form rather than repository
+content. Audited against the session that produced it: three clauses held,
+three were partial, and five had been violated — structure-first, no restating
+the conclusion, wording-is-not-a-decision, pick-a-term-and-move-on, and
+confidence-reported-separately. The last of these had been violated by treating
+a hedge ("it's a shape-index hit, I think") as grounds to withhold the entry.
+Resolving a confidence marker downward is still resolving it.
+
+Two clauses generated schema work. `GateType.REPRESENTATION` was added under
+"pick one, define it, move on", closing the refusal recorded in the entry
+above. `ClosureMode` was added under "a free-text discriminator carrying load
+is a flagged defect": the separation between `occupied_set_vs_space` and
+`independence_credited_vs_joint` — whether adding the omitted relation returns
+the quantity — lived only in prose the structural layer does not read.
+
+Measured effect: the two entries scored `structural=1.0000 on 1 slot` against
+each other before, and `structural=0.6000 on 3 slots` after, with the
+disagreement carried in `closure_mode`. `closure_mode` is weighted equal to
+`gate_type`, so the discriminating slot cannot be outvoted by the slots that
+agree. Tests 33 to 39.
+
+## 2026-08-22 (second)
+
+`AUDIT_CONTRACT.md` gained a Purpose statement and a Cross-model handoff
+section. Audited against the session that produced them: four violations, one
+clause held.
+
+The Purpose clause names what the rules are for — holding the translation
+layer count at one, so that mismatch between the author's model of a system
+and a language model's stays attributable. Under it, the previous report is a
+violation: it was written in the author's telegraphic register, reading
+"structure first" as *adopt the notation* rather than *show the artifact*.
+Mimicry reads as compliance and adds the second layer the clause exists to
+prevent. The consequence is now written into the contract beside the clause it
+qualifies.
+
+The handoff section produced a correction in `qrng-pair-search/` in the
+Simulators repository. That folder audited a co-produced document as a single
+layer and attributed its prose to a person — "the drop itself names", "the
+delivered drop stated". Material arriving co-produced cannot have its layers
+separated from inside the folder, so crediting either a claim or a mistake to
+an author requires knowing which layer produced it. The content audit is
+unchanged: the prose names a failure mode, the table contradicts it, and the
+table is what a verdict is computed from. The attribution was removed rather
+than reassigned.
+
+Not built, recorded as a gap: `provenance` is one flag per entry, so the
+schema cannot record that one slot came from a user contribution and another
+from a model overlay. The handoff section assumes those layers are separable;
+the schema assumes they are not. Three entries is too thin a basis to add a
+per-slot provenance field, and every entry in the index is currently
+`MODEL_SEEDED`, so nothing is presently mis-recorded.

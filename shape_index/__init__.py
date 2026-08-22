@@ -3,7 +3,12 @@
 
 """A small, inspectable index of recurring structural signatures."""
 
-from .entries import ENTRIES, OCCUPIED_SET_VS_SPACE, SUPPLY_COUPLED_DRAW
+from .entries import (
+    ENTRIES,
+    INDEPENDENCE_CREDITED_VS_JOINT,
+    OCCUPIED_SET_VS_SPACE,
+    SUPPLY_COUPLED_DRAW,
+)
 from .match import (
     MatchResult,
     SlotOverlap,
@@ -14,6 +19,7 @@ from .match import (
     self_consistency,
 )
 from .schema import (
+    ClosureMode,
     GateType,
     Instance,
     Provenance,
@@ -26,8 +32,10 @@ from .schema import (
 
 __all__ = [
     "ENTRIES",
+    "INDEPENDENCE_CREDITED_VS_JOINT",
     "OCCUPIED_SET_VS_SPACE",
     "SUPPLY_COUPLED_DRAW",
+    "ClosureMode",
     "GateType",
     "Instance",
     "MatchResult",

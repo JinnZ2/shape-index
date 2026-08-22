@@ -19,6 +19,11 @@ constraint. The index therefore records the constraint as a field. An entry
 with no identifiable constraint is weaker evidence than one with a stated
 constraint, and the schema shows that difference rather than hiding it.
 
+`AUDIT_CONTRACT.md` governs output form. Read it before reporting: structure
+first, gap analysis as deliverable, a score without its support count is not a
+score, wording is not a decision, and a free-text discriminator carrying load
+is a flagged defect.
+
 ## Hard constraints
 
 These are not preferences. Do not relax them without being asked.
@@ -47,6 +52,7 @@ These are not preferences. Do not relax them without being asked.
 | `FALSIFIER.md` | What breaks an entry. |
 | `OPEN.md` | Stated limits and unanswered questions. |
 | `LOG.md` | Dated record of what happened, in order. |
+| `AUDIT_CONTRACT.md` | How work is reported here. Binding on the report, as this file is on the repository. |
 
 ## Writing an entry
 
@@ -56,8 +62,9 @@ An entry is a claim about structure and is judged as one.
   units), what switches, what the switch is gated on, what is held constant
   through the switch. Write the slots so that a reader from either domain could
   recognise the structure without recognising the wording.
-- **The switch-and-gate pair is typed.** `gate_type`, `switch_direction`, and
-  `switch_periodicity` come from the controlled vocabularies in `schema.py` and
+- **The switch-and-gate pair is typed.** `gate_type`, `closure_mode`,
+  `switch_direction`, and `switch_periodicity` come from the controlled
+  vocabularies in `schema.py` and
   are the only slots that carry structural weight in matching. Free text is
   filled in the vocabulary of whoever writes the entry, so scoring it as
   structure would reproduce the vocabulary trap one level down. Leave a typed
@@ -93,8 +100,10 @@ An entry is a claim about structure and is judged as one.
 ## Matching
 
 `match.py` scores two layers and keeps them apart. The **structural** layer
-compares the typed switch-and-gate slots by identity; the gate carries the most
-weight, then the two switch descriptors. The **lexical** layer compares the
+compares the typed slots by identity; the gate and `closure_mode` carry the
+most weight, then the two switch descriptors. `closure_mode` is weighted equal
+to the gate on purpose: it is the discriminating slot, and a discriminator that
+can be outvoted by the slots that agree is not doing its job. The **lexical** layer compares the
 free-text slots by token overlap; held-constant and constraint lead, units and
 the free-text switch and gate trail.
 
