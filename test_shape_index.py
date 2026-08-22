@@ -441,6 +441,37 @@ class MatchTests(unittest.TestCase):
         self.assertGreater(result.support("structural"), 1)
         self.assertNotIn("ONE slot", explain(result))
 
+    def test_abstention_is_distinguished_from_disagreement(self):
+        """A slot unset on one side is not a slot that disagrees."""
+        left = _signature("a", "b", "c", "d", "e",
+                          direction=SwitchDirection.DECREASE,
+                          gate=GateType.THRESHOLD)
+        abstains = _signature("a", "b", "c", "d", "e",
+                              direction=SwitchDirection.DECREASE)
+        conflicts = _signature("a", "b", "c", "d", "e",
+                               direction=SwitchDirection.DECREASE,
+                               gate=GateType.DEMAND)
+        a = compare_signatures(left, abstains)
+        c = compare_signatures(left, conflicts)
+        self.assertEqual(a.structural_score, c.structural_score)
+        self.assertEqual(a.abstentions("structural"), 1)
+        self.assertEqual(c.abstentions("structural"), 0)
+        self.assertIn("ABSTENTIONS", explain(a))
+        self.assertNotIn("ABSTENTIONS", explain(c))
+
+    def test_abstention_still_costs_score(self):
+        left = _signature("a", "b", "c", "d", "e",
+                          direction=SwitchDirection.DECREASE,
+                          gate=GateType.THRESHOLD)
+        both = _signature("a", "b", "c", "d", "e",
+                          direction=SwitchDirection.DECREASE,
+                          gate=GateType.THRESHOLD)
+        abstains = _signature("a", "b", "c", "d", "e",
+                              direction=SwitchDirection.DECREASE)
+        self.assertEqual(compare_signatures(left, both).structural_score, 1.0)
+        self.assertLess(
+            compare_signatures(left, abstains).structural_score, 1.0)
+
     def test_explain_shows_both_layers_and_the_guard(self):
         text = explain(compare(SUPPLY_COUPLED_DRAW, SUPPLY_COUPLED_DRAW))
         self.assertIn("structural", text)

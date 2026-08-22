@@ -88,3 +88,42 @@ question is what happens to the first entry where a person supplies the
 signature slots and a model supplies the instance list, which is the shape
 most of these entries have arrived in. Whether provenance belongs per-slot,
 per-instance, or nowhere is open.
+
+An external report predicted structural scores for five candidate shapes
+against the index. Four of five did not reproduce:
+
+    left                              right                  predicted   actual
+    bottleneck_limited_throughput     supply_coupled_draw     0.67 / 2   0.75 / 3
+    threshold_with_memory             supply_coupled_draw     0.25 / 2   0.25 / 3
+    failure_containment_by_partition  supply_coupled_draw     0.17 / 2   0.00 / 3
+    failure_containment_by_partition  occupied_set_vs_space   0.20 / 3   0.17 / 4
+    setpoint_regulation               threshold_with_memory   1.00 / 3   1.00 / 3
+
+The report states the rule correctly — a slot unset on one side scores 0.0 —
+and then computes every score as though such a slot were dropped from the
+denominator instead of kept in it. Stated rule and applied rule differ, which
+is why the slot counts are short by one in four rows out of five. The one row
+that reproduces is the one where no slot is one-sided.
+
+That surfaced a defect here, not only there. `supply_coupled_draw` carries
+`switch_periodicity=UNSPECIFIED` deliberately, because its own instances
+disagree. Every candidate specifies a periodicity, so every comparison against
+the seed took a one-sided penalty that reports nothing about either shape.
+`bottleneck_limited_throughput` against the seed scored 0.75, and `explain()`
+rendered the shortfall exactly as it renders a disagreement — so a pair that
+agrees on **every slot both sides fill** looked like a pair with a conflict.
+The nearest-rival collision was worse than the score showed, and the
+presentation was hiding it. `SlotOverlap.one_sided` and
+`MatchResult.abstentions()` now separate abstention from disagreement in the
+reporting; the scoring is unchanged, because one-sided evidence should still
+cost something. Whether it should is now a question worth asking, and is open:
+an entry that honestly abstains is currently penalised against every entry
+that commits.
+
+A second finding the report did not reach. Four of its five candidates are
+`gate_type=THRESHOLD`, and they score 0.50 to 1.00 against one another —
+`setpoint_regulation` against `threshold_with_memory` is 1.0000 on three
+slots. THRESHOLD is behaving as a bucket rather than a discriminator, which is
+the same failure the original five gate terms had, at a different term. The
+report's own question — THRESHOLD versus STATE for bulkheads and membranes —
+is a smaller version of this and does not fix it.

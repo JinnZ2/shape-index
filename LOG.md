@@ -113,3 +113,26 @@ from a model overlay. The handoff section assumes those layers are separable;
 the schema assumes they are not. Three entries is too thin a basis to add a
 per-slot provenance field, and every entry in the index is currently
 `MODEL_SEEDED`, so nothing is presently mis-recorded.
+
+## 2026-08-22 (third)
+
+An external co-produced report proposed five candidate shapes with predicted
+structural scores. The predictions were run against the matcher rather than
+read: four of five do not reproduce. The report states the one-sided rule
+correctly and then computes as though the opposite rule applied.
+
+The run surfaced a local defect. `explain()` rendered a one-sided slot — one
+side filled, the other unset — identically to a slot where the two sides
+disagree. `bottleneck_limited_throughput` against `supply_coupled_draw` agrees
+on every slot both sides fill and scores 0.75, and the shortfall read as a
+conflict. `SlotOverlap.one_sided` and `MatchResult.abstentions()` now separate
+the two in the report; scoring is unchanged.
+
+No entries added. Several citations in the report are not usable as given —
+a trade website as a source, a PMC identifier with no authors, a PMC number
+outside the plausible range for its year, two 2026 references uncheckable from
+the printed terms. Instances are cited sources; the gate holds.
+
+The report's about-the-author section was not carried into the repository. It
+is barred by CLAUDE.md and by AUDIT_CONTRACT.md, and its content is inferred
+rather than reported.
