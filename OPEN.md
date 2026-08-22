@@ -62,3 +62,19 @@ omitted relation to the model returns the quantity. For
 distinction is carried only in free-text discriminators, which the structural
 layer does not read. Whether it should become a typed slot of its own, or
 whether the two entries are one shape and should be merged, is open.
+
+The gate-vocabulary failure recorded above is now patched, and the patch is
+itself a claim. `GateType.REPRESENTATION` and the `ClosureMode` slot were added
+from three entries — a thin basis, and thinner than the rule that taxonomies
+should come from reading entries. The two terms may be wrong in the same way the
+original five were: `REPRESENTATION` names an absence of physical gating rather
+than a positive kind, and `ClosureMode` has three values chosen to separate two
+entries. Both are more likely to break than the terms that have survived
+several entries.
+
+What the patch bought is measurable. `independence_credited_vs_joint` against
+`occupied_set_vs_space` scored `structural=1.0000 on 1 slot` before it and
+`structural=0.6000 on 3 slots` after, with the disagreement in `closure_mode`
+where the claim actually sits. What it cost is that a separation which was
+visible as a defect is now absorbed into a score, and the next reader will not
+see that it was ever in doubt.

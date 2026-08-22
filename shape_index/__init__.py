@@ -19,6 +19,7 @@ from .match import (
     self_consistency,
 )
 from .schema import (
+    ClosureMode,
     GateType,
     Instance,
     Provenance,
@@ -34,6 +35,7 @@ __all__ = [
     "INDEPENDENCE_CREDITED_VS_JOINT",
     "OCCUPIED_SET_VS_SPACE",
     "SUPPLY_COUPLED_DRAW",
+    "ClosureMode",
     "GateType",
     "Instance",
     "MatchResult",

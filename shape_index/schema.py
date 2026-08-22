@@ -53,12 +53,42 @@ class SwitchPeriodicity(str, Enum):
     UNSPECIFIED = "UNSPECIFIED"
 
 
+class ClosureMode(str, Enum):
+    """What closes the gap between the two counts the switch prices.
+
+    REPRESENTATIONAL   adding the omitted relation to the model returns the
+                       quantity, with the system untouched. The surplus was
+                       an artifact of the coordinates.
+    PHYSICAL           writing the relation into the model reports the loss
+                       and does not reverse it. Only a change to the
+                       apparatus returns the quantity.
+    IRREDUCIBLE        the gap does not close by either route.
+
+    This slot exists because two entries were being separated by a free-text
+    discriminator alone, which the structural layer does not read. A
+    discriminator carrying that load in prose is a defect, not a finished
+    entry.
+    """
+
+    REPRESENTATIONAL = "REPRESENTATIONAL"
+    PHYSICAL = "PHYSICAL"
+    IRREDUCIBLE = "IRREDUCIBLE"
+    UNSPECIFIED = "UNSPECIFIED"
+
+
 class GateType(str, Enum):
     """What the switch is gated on, in controlled terms.
 
     AVAILABILITY gates on upstream supply; DEMAND on downstream requirement;
     THRESHOLD on a level being crossed; PHASE on position within a cycle;
     STATE on the internal condition of the dependent party.
+
+    REPRESENTATION gates on whether a relation among the parts is present in
+    the formalism, rather than on any physical quantity. It was added after
+    two entries in a row could not be typed by the other five, which named
+    only properties of a physical quantity. The failure is recorded in
+    OPEN.md and in LOG.md before this term; the record shows the vocabulary
+    failing before it shows it patched.
     """
 
     AVAILABILITY = "AVAILABILITY"
@@ -66,6 +96,7 @@ class GateType(str, Enum):
     THRESHOLD = "THRESHOLD"
     PHASE = "PHASE"
     STATE = "STATE"
+    REPRESENTATION = "REPRESENTATION"
     UNSPECIFIED = "UNSPECIFIED"
 
 
@@ -73,7 +104,7 @@ class GateType(str, Enum):
 class Signature:
     """The structural slots used for matching, not the vocabulary.
 
-    The three typed slots carry the structural claim. The five free-text slots
+    The four typed slots carry the structural claim. The five free-text slots
     record how this filling was worded, and are scored separately as lexical
     evidence so that the two are never conflated in one number.
     """
@@ -86,6 +117,7 @@ class Signature:
     switch_direction: SwitchDirection = SwitchDirection.UNSPECIFIED
     switch_periodicity: SwitchPeriodicity = SwitchPeriodicity.UNSPECIFIED
     gate_type: GateType = GateType.UNSPECIFIED
+    closure_mode: ClosureMode = ClosureMode.UNSPECIFIED
 
 
 @dataclass(frozen=True)

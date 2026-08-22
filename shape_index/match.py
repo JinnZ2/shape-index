@@ -24,6 +24,7 @@ from .schema import ShapeEntry, Signature
 # because their typed counterparts already carry that claim.
 STRUCTURAL_WEIGHTS = {
     "gate_type": 2.0,
+    "closure_mode": 2.0,
     "switch_direction": 1.0,
     "switch_periodicity": 1.0,
 }
@@ -55,7 +56,9 @@ _STOPWORDS = frozenset(
     )
 )
 
-_STRUCTURAL_ORDER = ("gate_type", "switch_direction", "switch_periodicity")
+_STRUCTURAL_ORDER = (
+    "gate_type", "closure_mode", "switch_direction", "switch_periodicity",
+)
 _LEXICAL_ORDER = ("flows", "switches", "gated_on", "held_constant", "units", "constraint")
 
 
@@ -179,6 +182,7 @@ def _compare_slots(
 
     typed = {
         "gate_type": (left.gate_type, right.gate_type),
+        "closure_mode": (left.closure_mode, right.closure_mode),
         "switch_direction": (left.switch_direction, right.switch_direction),
         "switch_periodicity": (left.switch_periodicity, right.switch_periodicity),
     }
