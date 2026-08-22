@@ -136,3 +136,27 @@ the printed terms. Instances are cited sources; the gate holds.
 The report's about-the-author section was not carried into the repository. It
 is barred by CLAUDE.md and by AUDIT_CONTRACT.md, and its content is inferred
 rather than reported.
+
+## 2026-08-22 (fourth)
+
+`AUDIT_CONTRACT.md` replaced with the delivered version and installed in the
+Simulators repository as well, referenced from both `CLAUDE.md` files. Two new
+clauses caught committed work.
+
+**Selection and substrate** — absence of a legible reason for a mechanism is
+not evidence of absence of reason. `qrng-pair-search/` had read a bath
+assignment as a dropped term. Measured, the readout baths are identical across
+all seven sources, so they are a constant and the pair partition is unchanged
+by including them. A table built to rank pairs has a reason to carry the
+discriminating set and drop the constant. The correction was withdrawn and
+narrowed to the verdict word.
+
+**Wording** — a defined technical term with a formal definition and a
+sign/rate is a measurement term. "Hide the entropy in the correlation rule"
+had been audited only as a secret algorithm, where the Kerckhoffs objection
+holds. Read as a secret seed it names a seeded extractor, a standard
+construction where the seed is key material. That reading was not recovered.
+
+Both violations have the same shape as `occupied_set_vs_space`: a formalism
+carrying a variable the system does not, and an omission read as an error when
+it was a term correctly dropped. The index has an entry for it.
