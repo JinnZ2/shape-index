@@ -81,3 +81,35 @@ each other before, and `structural=0.6000 on 3 slots` after, with the
 disagreement carried in `closure_mode`. `closure_mode` is weighted equal to
 `gate_type`, so the discriminating slot cannot be outvoted by the slots that
 agree. Tests 33 to 39.
+
+## 2026-08-22 (second)
+
+`AUDIT_CONTRACT.md` gained a Purpose statement and a Cross-model handoff
+section. Audited against the session that produced them: four violations, one
+clause held.
+
+The Purpose clause names what the rules are for — holding the translation
+layer count at one, so that mismatch between the author's model of a system
+and a language model's stays attributable. Under it, the previous report is a
+violation: it was written in the author's telegraphic register, reading
+"structure first" as *adopt the notation* rather than *show the artifact*.
+Mimicry reads as compliance and adds the second layer the clause exists to
+prevent. The consequence is now written into the contract beside the clause it
+qualifies.
+
+The handoff section produced a correction in `qrng-pair-search/` in the
+Simulators repository. That folder audited a co-produced document as a single
+layer and attributed its prose to a person — "the drop itself names", "the
+delivered drop stated". Material arriving co-produced cannot have its layers
+separated from inside the folder, so crediting either a claim or a mistake to
+an author requires knowing which layer produced it. The content audit is
+unchanged: the prose names a failure mode, the table contradicts it, and the
+table is what a verdict is computed from. The attribution was removed rather
+than reassigned.
+
+Not built, recorded as a gap: `provenance` is one flag per entry, so the
+schema cannot record that one slot came from a user contribution and another
+from a model overlay. The handoff section assumes those layers are separable;
+the schema assumes they are not. Three entries is too thin a basis to add a
+per-slot provenance field, and every entry in the index is currently
+`MODEL_SEEDED`, so nothing is presently mis-recorded.

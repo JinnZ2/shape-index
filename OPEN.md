@@ -78,3 +78,13 @@ What the patch bought is measurable. `independence_credited_vs_joint` against
 where the claim actually sits. What it cost is that a separation which was
 visible as a defect is now absorbed into a score, and the next reader will not
 see that it was ever in doubt.
+
+`provenance` is one flag per entry and the cross-model handoff section of
+`AUDIT_CONTRACT.md` asks for two layers to be separated — user contribution
+from model overlay — before an audit begins. The schema cannot record that
+separation: an entry is `AUTHORED` or `MODEL_SEEDED` whole. Nothing is
+mis-recorded today, because every entry in the index is `MODEL_SEEDED`. The
+question is what happens to the first entry where a person supplies the
+signature slots and a model supplies the instance list, which is the shape
+most of these entries have arrived in. Whether provenance belongs per-slot,
+per-instance, or nowhere is open.

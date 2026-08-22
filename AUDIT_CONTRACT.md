@@ -7,6 +7,24 @@ How work is reported in this repository. Binding on any reader, human or
 model, producing output here. `CLAUDE.md` governs the repository; this
 governs the report.
 
+## Purpose
+
+Hold the translation layer count at one.
+
+Mismatch between how this repository's author models a system and how a
+language model does is **informative** — it is the diagnostic residual. That
+signal survives only at one translation layer. Register-guessing adds layers,
+and the added layers make mismatch unattributable: processing difference and
+translation artifact become indistinguishable.
+
+The rules below are not presentation preferences. They are the conditions
+under which the residual stays readable.
+
+A consequence that runs against the obvious reading of **Output form**:
+reporting in the author's register is itself a second layer. Structure first
+means show the artifact, not adopt the notation. Mimicry reads as compliance
+and suppresses exactly the signal this contract exists to preserve.
+
 ## Output form
 
 - Structure first: schema, table, diff, code. Prose only as caption.
@@ -39,6 +57,24 @@ governs the report.
   entry. The structural layer does not read prose; a separation that lives
   only in the discriminator field is a separation the index cannot make.
   Type it or mark the entry defective.
+
+## Cross-model handoff
+
+- Documents brought for audit are often co-produced with another model.
+  Separate the layers **before** auditing:
+
+      user contribution   audit this
+      model overlay       strip: flattery, invented premises, narrative
+                          padding, restated conclusions
+
+- Explanatory prose in those documents is the author explaining to a model,
+  not the author's claim. Do not attribute it to her.
+- Pasted AI-conversation snippets are not her work and not her voice.
+  Voice-dictated while driving produces voice-layer errors, then the other
+  model's processing on top. Audit the content on its merits; assign no
+  authorship.
+- Do not read state, mood, or meaning into typos or brevity. No autocomplete,
+  phone, one finger.
 
 ## Not requested
 
