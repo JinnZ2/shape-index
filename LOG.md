@@ -160,3 +160,27 @@ construction where the seed is key material. That reading was not recovered.
 Both violations have the same shape as `occupied_set_vs_space`: a formalism
 carrying a variable the system does not, and an omission read as an error when
 it was a term correctly dropped. The index has an entry for it.
+
+## 2026-08-22 (fifth)
+
+An OPEN.md addendum arrived. Checked against the repository before installing:
+sections 1 and 2 describe a state two commits old, section 5 restates a
+correction this repository withdrew after measuring it, and sections 3 and 4
+are live.
+
+Installed. `ClosureMode` restated from a counterfactual to a property — "does
+the omitted relation have a referent outside the formalism?" — which makes it
+the same kind of term as every other typed slot instead of one that names a
+repair action. Values unchanged and mapping one to one. Its falsifier is
+recorded and may already have fired on the category-weld instance.
+
+Support gating added: `verdict(layer)` returns UNRESOLVED below two comparable
+slots regardless of score. Scoring untouched.
+
+Section 5 was right about the object and wrong about the level, and so was the
+withdrawal. The readout chain discriminates, but only as a property of the
+deployment — which elements two legs share — not as a property of a source.
+Corrected in the Simulators repository; three readings of that field are left
+in its record.
+
+Tests 41 to 44.

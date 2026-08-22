@@ -127,3 +127,39 @@ slots. THRESHOLD is behaving as a bucket rather than a discriminator, which is
 the same failure the original five gate terms had, at a different term. The
 report's own question — THRESHOLD versus STATE for bulkheads and membranes —
 is a smaller version of this and does not fix it.
+
+An addendum arrived describing the collision between `occupied_set_vs_space`
+and `independence_credited_vs_joint` as live: `gate_type` unspecified on both,
+structural falling through to `switch_direction` and returning 1.0. That state
+is two commits old. `GateType.REPRESENTATION` and `ClosureMode` were added
+after the failure was recorded, and the pair now scores 0.6000 on three slots
+with the disagreement in `closure_mode`. The addendum's §2 — GateType
+deliberately not added — describes the same superseded state. Its proposed
+`COLLISION_REGISTER` is not implemented, because a register that surfaces a
+discriminator alongside a score is what a typed slot already does, and adding
+one would put the same distinction in two places.
+
+What the addendum carries that the schema did not: the discriminator restated
+as a **property** rather than a counterfactual. "After the omitted relation is
+written into the model, does the credited quantity return?" names a repair
+action, which made `ClosureMode` a different KIND of term from every other
+typed slot. "Does the omitted relation have a referent outside the formalism?"
+is a property of the relation, same kind as the rest. The values map one to
+one — REPRESENTATIONAL is NO, PHYSICAL is YES — so the slot was right and its
+definition was not. Redefined; the counterfactual is now recorded as a
+consequence.
+
+The falsifier that came with it is live and may already have fired. The cut
+collapses if a coordinate artifact IS the measurement apparatus, because the
+relation is then inside and outside the formalism at once. The category-weld
+instance of `independence_credited_vs_joint` is a shared word in the
+instrument — a representational object that is also the apparatus doing the
+measuring. It is marked as territory in the source table and it is the shape
+of the collapse condition. Flagged, not resolved: whether that instance
+retires the discriminator and folds the two entries is open, and it is the
+single most consequential open question in the index.
+
+Support gating is implemented as proposed. `MatchResult.verdict(layer)`
+returns UNRESOLVED below `MIN_SUPPORT = 2` comparable slots, whatever the
+score, and `explain()` prints the verdict beside the score. Scoring semantics
+are untouched: this reads a score, it does not compute one.

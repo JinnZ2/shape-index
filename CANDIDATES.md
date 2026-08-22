@@ -42,3 +42,16 @@ them, no instance from this report enters the index.
 
 **The report's structural predictions do not reproduce.** Four of its five
 predicted scores are wrong; see `OPEN.md`.
+
+## Candidate parent shape — confidence 40%, recorded as given
+
+    credited_support_vs_actual_support
+      |- coupling         (independence_credited)   n_eff < n via correlation
+      |- small n          (one-slot layer score)    n_eff = 1
+      |- evidence reuse                             same datum counted twice
+
+Proposed on the observation that Kish's denominator and a one-slot layer score
+are the same denominator. Not written as an entry: the proposal states it needs
+a third mechanism instance first, and evidence reuse is currently a name
+without a cited instance. The 40% is carried as delivered and is not argued in
+either direction here.

@@ -46,6 +46,12 @@ SLOT_WEIGHTS.update(LEXICAL_WEIGHTS)
 # so that a reader can disagree with it.
 MATCH_THRESHOLD = 0.5
 
+# A layer score resting on fewer than this many comparable slots is not a
+# match and not a non-match: it is UNRESOLVED. Reporting the support count
+# leaves the caller to notice; gating states it. Scoring is untouched -- this
+# reads the score, it does not compute one.
+MIN_SUPPORT = 2
+
 # Function words carry no structural information, so they are dropped before
 # comparison. This list is deliberately tiny: domain terms are never stripped,
 # because deciding which terms are unimportant is the reader's call.
@@ -105,6 +111,22 @@ class MatchResult:
         """Return the slots belonging to one layer."""
 
         return tuple(entry for entry in self.slots if entry.layer == name)
+
+    def verdict(self, name: str = "structural") -> str:
+        """MATCH, MISMATCH, or UNRESOLVED for one layer.
+
+        UNRESOLVED is returned whenever the layer rests on fewer than
+        MIN_SUPPORT comparable slots, whatever the score. A score of 1.0 on
+        one slot cannot distinguish agreement from there being nothing to
+        disagree about, and calling that a match is the failure this guard
+        exists to stop.
+        """
+
+        if self.support(name) < MIN_SUPPORT:
+            return "UNRESOLVED"
+        score = (self.structural_score if name == "structural"
+                 else self.lexical_score)
+        return "MATCH" if score >= MATCH_THRESHOLD else "MISMATCH"
 
     def abstentions(self, name: str) -> int:
         """Slots in a layer where one side is unset: abstention, not conflict.
@@ -321,8 +343,9 @@ def explain(result: MatchResult) -> str:
 
     lines = [
         "%s" % (result.shape_id or "(unlabelled)"),
-        "  structural=%.4f on %d slot(s)   lexical=%.4f on %d slot(s)"
+        "  structural=%.4f on %d slot(s) [%s]   lexical=%.4f on %d slot(s)"
         % (result.structural_score, result.support("structural"),
+           result.verdict("structural"),
            result.lexical_score, result.support("lexical")),
         "  blended=%.4f" % result.score,
     ]
@@ -336,13 +359,13 @@ def explain(result: MatchResult) -> str:
             lines.append(
                 "  one side, not disagreements. The score is reduced by them."
             )
-    if result.support("structural") == 1:
+    if result.support("structural") < MIN_SUPPORT:
         lines.append(
-            "  NOTE: the structural score rests on ONE slot. It cannot "
-            "distinguish"
+            "  UNRESOLVED: the structural layer rests on %d slot(s), below the"
+            % result.support("structural")
         )
         lines.append(
-            "  agreement from absence of anything to disagree about."
+            "  MIN_SUPPORT of %d. Not a match and not a non-match." % MIN_SUPPORT
         )
     for layer in ("structural", "lexical"):
         slots = result.layer(layer)

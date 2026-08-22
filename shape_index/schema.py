@@ -54,15 +54,33 @@ class SwitchPeriodicity(str, Enum):
 
 
 class ClosureMode(str, Enum):
-    """What closes the gap between the two counts the switch prices.
+    """Whether the omitted relation has a referent outside the formalism.
 
-    REPRESENTATIONAL   adding the omitted relation to the model returns the
-                       quantity, with the system untouched. The surplus was
-                       an artifact of the coordinates.
-    PHYSICAL           writing the relation into the model reports the loss
-                       and does not reverse it. Only a change to the
-                       apparatus returns the quantity.
-    IRREDUCIBLE        the gap does not close by either route.
+    This is a property of the relation, which is the same KIND of term as
+    every other typed slot. It was first stated as a counterfactual -- "after
+    the omitted relation is written into the model, does the credited quantity
+    return?" -- which names a repair action rather than a property, and made
+    this slot a different kind of thing from the rest of the vocabulary. The
+    counterfactual is a consequence of the property, not its definition.
+
+    REPRESENTATIONAL   NO referent outside the formalism. The relation is a
+                       coordinate artifact; there is no coupling in the world
+                       to find. (Consequence: writing it in returns the
+                       quantity, physics untouched.)
+    PHYSICAL           YES, a referent outside the formalism. The bath is
+                       real, the rails are actually shared, the cluster
+                       members really do resemble each other. (Consequence:
+                       writing it in reports the loss and does not reverse
+                       it; only the apparatus returns the quantity.)
+    IRREDUCIBLE        a referent exists and no change of apparatus removes
+                       it.
+
+    FALSIFIER FOR THIS SLOT: the map/territory cut collapses if a coordinate
+    artifact IS the measurement apparatus, because then the relation is both
+    inside and outside the formalism at once. Watch for that case; it retires
+    the distinction and folds the two entries it separates. See OPEN.md --
+    `independence_credited_vs_joint`'s category-weld instance may already be
+    it, and is flagged rather than resolved.
 
     This slot exists because two entries were being separated by a free-text
     discriminator alone, which the structural layer does not read. A

@@ -13,6 +13,7 @@ from shape_index.entries import (
 )
 from shape_index.match import (
     MATCH_THRESHOLD,
+    MIN_SUPPORT,
     STRUCTURAL_WEIGHTS,
     compare,
     compare_signatures,
@@ -425,8 +426,8 @@ class MatchTests(unittest.TestCase):
             result.support("lexical"), len(result.layer("lexical")))
         self.assertEqual(result.support("nonexistent"), 0)
 
-    def test_a_one_slot_structural_score_is_flagged_in_explain(self):
-        """1.0 on one slot and 1.0 on three slots are not the same evidence."""
+    def test_a_one_slot_layer_is_unresolved_not_a_match(self):
+        """1.0 on one slot is not a match; it is nothing to disagree about."""
         left = _signature("a", "b", "c", "d", "e",
                           direction=SwitchDirection.DECREASE)
         right = _signature("v", "w", "x", "y", "z",
@@ -434,12 +435,30 @@ class MatchTests(unittest.TestCase):
         result = compare_signatures(left, right)
         self.assertEqual(result.structural_score, 1.0)
         self.assertEqual(result.support("structural"), 1)
-        self.assertIn("ONE slot", explain(result))
+        self.assertEqual(result.verdict("structural"), "UNRESOLVED")
+        self.assertIn("UNRESOLVED", explain(result))
 
-    def test_a_multi_slot_structural_score_is_not_flagged(self):
+    def test_gating_does_not_change_the_score(self):
+        left = _signature("a", "b", "c", "d", "e",
+                          direction=SwitchDirection.DECREASE)
+        right = _signature("v", "w", "x", "y", "z",
+                           direction=SwitchDirection.DECREASE)
+        self.assertEqual(compare_signatures(left, right).structural_score, 1.0)
+
+    def test_min_support_is_two(self):
+        self.assertEqual(MIN_SUPPORT, 2)
+
+    def test_resolved_layers_return_match_or_mismatch(self):
+        both = compare(SUPPLY_COUPLED_DRAW, SUPPLY_COUPLED_DRAW)
+        self.assertEqual(both.verdict("structural"), "MATCH")
+        pair = compare(INDEPENDENCE_CREDITED_VS_JOINT, OCCUPIED_SET_VS_SPACE)
+        self.assertEqual(pair.support("structural"), 3)
+        self.assertIn(pair.verdict("structural"), ("MATCH", "MISMATCH"))
+
+    def test_a_multi_slot_structural_score_is_not_gated(self):
         result = compare(SUPPLY_COUPLED_DRAW, SUPPLY_COUPLED_DRAW)
-        self.assertGreater(result.support("structural"), 1)
-        self.assertNotIn("ONE slot", explain(result))
+        self.assertGreaterEqual(result.support("structural"), MIN_SUPPORT)
+        self.assertNotIn("UNRESOLVED", explain(result))
 
     def test_abstention_is_distinguished_from_disagreement(self):
         """A slot unset on one side is not a slot that disagrees."""
