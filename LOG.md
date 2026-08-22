@@ -113,3 +113,74 @@ from a model overlay. The handoff section assumes those layers are separable;
 the schema assumes they are not. Three entries is too thin a basis to add a
 per-slot provenance field, and every entry in the index is currently
 `MODEL_SEEDED`, so nothing is presently mis-recorded.
+
+## 2026-08-22 (third)
+
+An external co-produced report proposed five candidate shapes with predicted
+structural scores. The predictions were run against the matcher rather than
+read: four of five do not reproduce. The report states the one-sided rule
+correctly and then computes as though the opposite rule applied.
+
+The run surfaced a local defect. `explain()` rendered a one-sided slot — one
+side filled, the other unset — identically to a slot where the two sides
+disagree. `bottleneck_limited_throughput` against `supply_coupled_draw` agrees
+on every slot both sides fill and scores 0.75, and the shortfall read as a
+conflict. `SlotOverlap.one_sided` and `MatchResult.abstentions()` now separate
+the two in the report; scoring is unchanged.
+
+No entries added. Several citations in the report are not usable as given —
+a trade website as a source, a PMC identifier with no authors, a PMC number
+outside the plausible range for its year, two 2026 references uncheckable from
+the printed terms. Instances are cited sources; the gate holds.
+
+The report's about-the-author section was not carried into the repository. It
+is barred by CLAUDE.md and by AUDIT_CONTRACT.md, and its content is inferred
+rather than reported.
+
+## 2026-08-22 (fourth)
+
+`AUDIT_CONTRACT.md` replaced with the delivered version and installed in the
+Simulators repository as well, referenced from both `CLAUDE.md` files. Two new
+clauses caught committed work.
+
+**Selection and substrate** — absence of a legible reason for a mechanism is
+not evidence of absence of reason. `qrng-pair-search/` had read a bath
+assignment as a dropped term. Measured, the readout baths are identical across
+all seven sources, so they are a constant and the pair partition is unchanged
+by including them. A table built to rank pairs has a reason to carry the
+discriminating set and drop the constant. The correction was withdrawn and
+narrowed to the verdict word.
+
+**Wording** — a defined technical term with a formal definition and a
+sign/rate is a measurement term. "Hide the entropy in the correlation rule"
+had been audited only as a secret algorithm, where the Kerckhoffs objection
+holds. Read as a secret seed it names a seeded extractor, a standard
+construction where the seed is key material. That reading was not recovered.
+
+Both violations have the same shape as `occupied_set_vs_space`: a formalism
+carrying a variable the system does not, and an omission read as an error when
+it was a term correctly dropped. The index has an entry for it.
+
+## 2026-08-22 (fifth)
+
+An OPEN.md addendum arrived. Checked against the repository before installing:
+sections 1 and 2 describe a state two commits old, section 5 restates a
+correction this repository withdrew after measuring it, and sections 3 and 4
+are live.
+
+Installed. `ClosureMode` restated from a counterfactual to a property — "does
+the omitted relation have a referent outside the formalism?" — which makes it
+the same kind of term as every other typed slot instead of one that names a
+repair action. Values unchanged and mapping one to one. Its falsifier is
+recorded and may already have fired on the category-weld instance.
+
+Support gating added: `verdict(layer)` returns UNRESOLVED below two comparable
+slots regardless of score. Scoring untouched.
+
+Section 5 was right about the object and wrong about the level, and so was the
+withdrawal. The readout chain discriminates, but only as a property of the
+deployment — which elements two legs share — not as a property of a source.
+Corrected in the Simulators repository; three readings of that field are left
+in its record.
+
+Tests 41 to 44.

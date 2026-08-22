@@ -46,6 +46,12 @@ SLOT_WEIGHTS.update(LEXICAL_WEIGHTS)
 # so that a reader can disagree with it.
 MATCH_THRESHOLD = 0.5
 
+# A layer score resting on fewer than this many comparable slots is not a
+# match and not a non-match: it is UNRESOLVED. Reporting the support count
+# leaves the caller to notice; gating states it. Scoring is untouched -- this
+# reads the score, it does not compute one.
+MIN_SUPPORT = 2
+
 # Function words carry no structural information, so they are dropped before
 # comparison. This list is deliberately tiny: domain terms are never stripped,
 # because deciding which terms are unimportant is the reader's call.
@@ -64,7 +70,14 @@ _LEXICAL_ORDER = ("flows", "switches", "gated_on", "held_constant", "units", "co
 
 @dataclass(frozen=True)
 class SlotOverlap:
-    """The evidence from a single slot, kept so a reader can reject it."""
+    """The evidence from a single slot, kept so a reader can reject it.
+
+    `one_sided` marks a slot filled on one side and unset on the other. It
+    scores 0.0 and stays in the denominator, because one-sided evidence
+    should cost something -- but it is an ABSTENTION, not a disagreement,
+    and reporting the two identically lets a pair that agrees on everything
+    both sides specify look like a pair that disagrees.
+    """
 
     slot: str
     layer: str
@@ -72,6 +85,7 @@ class SlotOverlap:
     shared: Tuple[str, ...]
     left_only: Tuple[str, ...]
     right_only: Tuple[str, ...]
+    one_sided: bool = False
 
 
 @dataclass(frozen=True)
@@ -98,6 +112,32 @@ class MatchResult:
 
         return tuple(entry for entry in self.slots if entry.layer == name)
 
+    def verdict(self, name: str = "structural") -> str:
+        """MATCH, MISMATCH, or UNRESOLVED for one layer.
+
+        UNRESOLVED is returned whenever the layer rests on fewer than
+        MIN_SUPPORT comparable slots, whatever the score. A score of 1.0 on
+        one slot cannot distinguish agreement from there being nothing to
+        disagree about, and calling that a match is the failure this guard
+        exists to stop.
+        """
+
+        if self.support(name) < MIN_SUPPORT:
+            return "UNRESOLVED"
+        score = (self.structural_score if name == "structural"
+                 else self.lexical_score)
+        return "MATCH" if score >= MATCH_THRESHOLD else "MISMATCH"
+
+    def abstentions(self, name: str) -> int:
+        """Slots in a layer where one side is unset: abstention, not conflict.
+
+        A pair that agrees on every slot both sides fill, and abstains on one,
+        scores below 1.0. Read the shortfall against this count before reading
+        it as disagreement.
+        """
+
+        return len([e for e in self.layer(name) if e.one_sided])
+
     def support(self, name: str) -> int:
         """How many comparable slots a layer's score actually rests on.
 
@@ -121,7 +161,8 @@ def _tokens(value: object) -> Tuple[str, ...]:
     return tuple(cleaned)
 
 
-def _lexical_slot(slot: str, left: object, right: object) -> SlotOverlap:
+def _lexical_slot(slot: str, left: object, right: object,
+                  one_sided: bool = False) -> SlotOverlap:
     left_tokens = set(_tokens(left))
     right_tokens = set(_tokens(right))
     union = left_tokens | right_tokens
@@ -134,10 +175,12 @@ def _lexical_slot(slot: str, left: object, right: object) -> SlotOverlap:
         shared=tuple(sorted(shared)),
         left_only=tuple(sorted(left_tokens - right_tokens)),
         right_only=tuple(sorted(right_tokens - left_tokens)),
+        one_sided=one_sided,
     )
 
 
-def _structural_slot(slot: str, left: Enum, right: Enum) -> SlotOverlap:
+def _structural_slot(slot: str, left: Enum, right: Enum,
+                     one_sided: bool = False) -> SlotOverlap:
     """Controlled terms are identical or they are not. There is no partial."""
 
     same = left is right
@@ -148,6 +191,7 @@ def _structural_slot(slot: str, left: Enum, right: Enum) -> SlotOverlap:
         shared=(left.value,) if same else (),
         left_only=() if same else (left.value,),
         right_only=() if same else (right.value,),
+        one_sided=one_sided,
     )
 
 
@@ -200,12 +244,16 @@ def _compare_slots(
         left_value, right_value = typed[slot]
         if _is_unset(left_value) and _is_unset(right_value):
             continue
-        overlaps.append(_structural_slot(slot, left_value, right_value))
+        one_sided = _is_unset(left_value) != _is_unset(right_value)
+        overlaps.append(
+            _structural_slot(slot, left_value, right_value, one_sided))
     for slot in _LEXICAL_ORDER:
         left_value, right_value = free[slot]
         if _is_unset(left_value) and _is_unset(right_value):
             continue
-        overlaps.append(_lexical_slot(slot, left_value or "", right_value or ""))
+        one_sided = _is_unset(left_value) != _is_unset(right_value)
+        overlaps.append(_lexical_slot(
+            slot, left_value or "", right_value or "", one_sided))
     return tuple(overlaps)
 
 
@@ -295,18 +343,29 @@ def explain(result: MatchResult) -> str:
 
     lines = [
         "%s" % (result.shape_id or "(unlabelled)"),
-        "  structural=%.4f on %d slot(s)   lexical=%.4f on %d slot(s)"
+        "  structural=%.4f on %d slot(s) [%s]   lexical=%.4f on %d slot(s)"
         % (result.structural_score, result.support("structural"),
+           result.verdict("structural"),
            result.lexical_score, result.support("lexical")),
         "  blended=%.4f" % result.score,
     ]
-    if result.support("structural") == 1:
+    for layer_name in ("structural", "lexical"):
+        n = result.abstentions(layer_name)
+        if n:
+            lines.append(
+                "  NOTE: %d %s slot(s) marked abst. are ABSTENTIONS -- unset on"
+                % (n, layer_name)
+            )
+            lines.append(
+                "  one side, not disagreements. The score is reduced by them."
+            )
+    if result.support("structural") < MIN_SUPPORT:
         lines.append(
-            "  NOTE: the structural score rests on ONE slot. It cannot "
-            "distinguish"
+            "  UNRESOLVED: the structural layer rests on %d slot(s), below the"
+            % result.support("structural")
         )
         lines.append(
-            "  agreement from absence of anything to disagree about."
+            "  MIN_SUPPORT of %d. Not a match and not a non-match." % MIN_SUPPORT
         )
     for layer in ("structural", "lexical"):
         slots = result.layer(layer)
@@ -314,7 +373,12 @@ def explain(result: MatchResult) -> str:
             continue
         lines.append("  [%s]" % layer)
         for slot in slots:
-            marker = "match" if slot.overlap >= MATCH_THRESHOLD else "     "
+            if slot.one_sided:
+                marker = "abst."
+            elif slot.overlap >= MATCH_THRESHOLD:
+                marker = "match"
+            else:
+                marker = "     "
             lines.append(
                 "    %-19s %-5s overlap=%.2f shared=%s"
                 % (slot.slot, marker, slot.overlap, ", ".join(slot.shared) or "-")

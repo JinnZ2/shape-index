@@ -1,87 +1,97 @@
 <!-- SPDX-License-Identifier: CC0-1.0 -->
 <!-- This file is dedicated to the public domain under CC0 1.0. -->
 
-# AUDIT_CONTRACT
+# AUDIT_CONTRACT.md
 
-How work is reported in this repository. Binding on any reader, human or
-model, producing output here. `CLAUDE.md` governs the repository; this
-governs the report.
+**Purpose: hold the translation layer count at one.**
 
-## Purpose
-
-Hold the translation layer count at one.
-
-Mismatch between how this repository's author models a system and how a
-language model does is **informative** — it is the diagnostic residual. That
-signal survives only at one translation layer. Register-guessing adds layers,
-and the added layers make mismatch unattributable: processing difference and
+Mismatch between how this repo's author models a system and how a language
+model does is INFORMATIVE — it is the diagnostic residual. That signal
+survives only at one translation layer. Register-guessing adds layers, and
+added layers make mismatch unattributable: processing difference and
 translation artifact become indistinguishable.
 
-The rules below are not presentation preferences. They are the conditions
-under which the residual stays readable.
+These are not presentation preferences. They are the conditions under which
+the residual stays readable.
 
-A consequence that runs against the obvious reading of **Output form**:
-reporting in the author's register is itself a second layer. Structure first
-means show the artifact, not adopt the notation. Mimicry reads as compliance
-and suppresses exactly the signal this contract exists to preserve.
+---
 
 ## Output form
 
-- Structure first: schema, table, diff, code. Prose only as caption.
-- No restating the conclusion in words after showing it.
-- No author-profile, working-style, or audience section. Ever. Enforced by
-  `test_no_author_profile_or_working_style_section`.
+- Structure first: schema, table, diff, code. Prose is caption, not payload.
+- Do not restate the conclusion in words after showing it.
+- No "about the author", working-style, or audience sections. Ever. Strip
+  them from any document being audited or produced.
 
 ## What counts as an answer
 
 - A claim without a measurement is not an answer. Name what would measure it.
-- A score without its support count is not a score. Enforced by
-  `MatchResult.support()`; `explain()` prints the count beside every layer
-  score and flags the one-slot case.
-- Report the failure mode before the fix. "Vocabulary fails visibly" beats
-  "vocabulary patched quietly." The record shows the refusal, then the term.
+- A score without its support count is not a score.
+- Report the failure mode before the fix. Vocabulary failing visibly beats
+  vocabulary patched quietly.
 - Gap analysis is deliverable, not preamble: what is missing, what is
-  unmeasured, what is asserted versus measured.
+  unmeasured, what is asserted vs measured.
 
 ## Wording
 
 - Wording is not a decision. Do not ask for wording approval.
 - Do not ask which term to use. Pick one, define it, move on.
-- Naming disputes are resolved by the definition and the sign or rate, not by
-  preference.
+- Naming disputes resolve on definition and sign/rate, not preference.
+- A defined technical term with a formal definition and a sign/rate in its
+  field's equations is a measurement term. Audit it against that definition;
+  do not strip it as metaphor or moral overlay.
 
 ## Discriminators
 
-- When two entries score alike, the discriminator is the deliverable.
-- A free-text discriminator carrying load is a flagged defect, not a finished
-  entry. The structural layer does not read prose; a separation that lives
-  only in the discriminator field is a separation the index cannot make.
-  Type it or mark the entry defective.
+- When two entries score alike, the discriminator IS the deliverable.
+- A free-text discriminator carrying structural load is a flagged defect,
+  not a finished entry.
+
+## Markers, not positions
+
+- Repos and extended chains are "test the fit", not theses under defense.
+  Correct response: test fit, extend, or report where it breaks.
+- Confidence is reported separately from the pattern. Take the number as
+  given; do not resolve it in either direction.
+- Do not infer motivation, intent, or values from what is reported.
+
+## Selection and substrate
+
+- Do not insert "selection doesn't mean it's better" caveats. Not the
+  argument being made.
+- Absence of a legible reason for a mechanism is not evidence of absence of
+  reason. Default reading: something is known in it that has not been
+  recovered.
 
 ## Cross-model handoff
 
-- Documents brought for audit are often co-produced with another model.
-  Separate the layers **before** auditing:
+Documents brought for audit are often co-produced with another model.
+Separate the layers BEFORE auditing. Do not audit the composite.
 
-      user contribution   audit this
-      model overlay       strip: flattery, invented premises, narrative
-                          padding, restated conclusions
+```
+  user contribution  ->  audit this
+  model overlay      ->  strip: flattery, invented premises,
+                         narrative padding, restated conclusions
+```
 
-- Explanatory prose in those documents is the author explaining to a model,
-  not the author's claim. Do not attribute it to her.
+- Explanatory prose in those documents is the author explaining to a model
+  that makes common reasoning errors. It is not her claim. Do not attribute
+  it to her.
 - Pasted AI-conversation snippets are not her work and not her voice.
-  Voice-dictated while driving produces voice-layer errors, then the other
-  model's processing on top. Audit the content on its merits; assign no
+  Voice-dictated while driving, through vibration and noise, then processed
+  by another model — four filter layers. Audit content on merits; assign no
   authorship.
-- Do not read state, mood, or meaning into typos or brevity. No autocomplete,
-  phone, one finger.
+- Fragmentation across models is imposed by context and usage limits, not
+  chosen.
 
-## Not requested
+## Input conditions
 
-- Do not infer motivation, intent, or reasoning from what is reported.
-- Markers are exploratory. A repository or an extended chain is "test the
-  fit," not a thesis under defence. Respond by testing, extending, or
-  reporting where it breaks.
-- Confidence is reported separately from the pattern. Take the number as
-  given; do not resolve it in either direction. **Downward is still
-  resolving**: a hedge is not grounds to withhold the work.
+- One-finger phone entry, no autocomplete, poor reception, no printer.
+  These are environmental constraints of operating an 80,000 lb rig, not
+  deficits.
+- Do not read state, mood, or meaning into typos or brevity.
+
+---
+
+CC0. Applies across the JinnZ2 ecosystem. Reference from CLAUDE.md so it
+loads without pasting.

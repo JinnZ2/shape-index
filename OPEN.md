@@ -88,3 +88,78 @@ question is what happens to the first entry where a person supplies the
 signature slots and a model supplies the instance list, which is the shape
 most of these entries have arrived in. Whether provenance belongs per-slot,
 per-instance, or nowhere is open.
+
+An external report predicted structural scores for five candidate shapes
+against the index. Four of five did not reproduce:
+
+    left                              right                  predicted   actual
+    bottleneck_limited_throughput     supply_coupled_draw     0.67 / 2   0.75 / 3
+    threshold_with_memory             supply_coupled_draw     0.25 / 2   0.25 / 3
+    failure_containment_by_partition  supply_coupled_draw     0.17 / 2   0.00 / 3
+    failure_containment_by_partition  occupied_set_vs_space   0.20 / 3   0.17 / 4
+    setpoint_regulation               threshold_with_memory   1.00 / 3   1.00 / 3
+
+The report states the rule correctly — a slot unset on one side scores 0.0 —
+and then computes every score as though such a slot were dropped from the
+denominator instead of kept in it. Stated rule and applied rule differ, which
+is why the slot counts are short by one in four rows out of five. The one row
+that reproduces is the one where no slot is one-sided.
+
+That surfaced a defect here, not only there. `supply_coupled_draw` carries
+`switch_periodicity=UNSPECIFIED` deliberately, because its own instances
+disagree. Every candidate specifies a periodicity, so every comparison against
+the seed took a one-sided penalty that reports nothing about either shape.
+`bottleneck_limited_throughput` against the seed scored 0.75, and `explain()`
+rendered the shortfall exactly as it renders a disagreement — so a pair that
+agrees on **every slot both sides fill** looked like a pair with a conflict.
+The nearest-rival collision was worse than the score showed, and the
+presentation was hiding it. `SlotOverlap.one_sided` and
+`MatchResult.abstentions()` now separate abstention from disagreement in the
+reporting; the scoring is unchanged, because one-sided evidence should still
+cost something. Whether it should is now a question worth asking, and is open:
+an entry that honestly abstains is currently penalised against every entry
+that commits.
+
+A second finding the report did not reach. Four of its five candidates are
+`gate_type=THRESHOLD`, and they score 0.50 to 1.00 against one another —
+`setpoint_regulation` against `threshold_with_memory` is 1.0000 on three
+slots. THRESHOLD is behaving as a bucket rather than a discriminator, which is
+the same failure the original five gate terms had, at a different term. The
+report's own question — THRESHOLD versus STATE for bulkheads and membranes —
+is a smaller version of this and does not fix it.
+
+An addendum arrived describing the collision between `occupied_set_vs_space`
+and `independence_credited_vs_joint` as live: `gate_type` unspecified on both,
+structural falling through to `switch_direction` and returning 1.0. That state
+is two commits old. `GateType.REPRESENTATION` and `ClosureMode` were added
+after the failure was recorded, and the pair now scores 0.6000 on three slots
+with the disagreement in `closure_mode`. The addendum's §2 — GateType
+deliberately not added — describes the same superseded state. Its proposed
+`COLLISION_REGISTER` is not implemented, because a register that surfaces a
+discriminator alongside a score is what a typed slot already does, and adding
+one would put the same distinction in two places.
+
+What the addendum carries that the schema did not: the discriminator restated
+as a **property** rather than a counterfactual. "After the omitted relation is
+written into the model, does the credited quantity return?" names a repair
+action, which made `ClosureMode` a different KIND of term from every other
+typed slot. "Does the omitted relation have a referent outside the formalism?"
+is a property of the relation, same kind as the rest. The values map one to
+one — REPRESENTATIONAL is NO, PHYSICAL is YES — so the slot was right and its
+definition was not. Redefined; the counterfactual is now recorded as a
+consequence.
+
+The falsifier that came with it is live and may already have fired. The cut
+collapses if a coordinate artifact IS the measurement apparatus, because the
+relation is then inside and outside the formalism at once. The category-weld
+instance of `independence_credited_vs_joint` is a shared word in the
+instrument — a representational object that is also the apparatus doing the
+measuring. It is marked as territory in the source table and it is the shape
+of the collapse condition. Flagged, not resolved: whether that instance
+retires the discriminator and folds the two entries is open, and it is the
+single most consequential open question in the index.
+
+Support gating is implemented as proposed. `MatchResult.verdict(layer)`
+returns UNRESOLVED below `MIN_SUPPORT = 2` comparable slots, whatever the
+score, and `explain()` prints the verdict beside the score. Scoring semantics
+are untouched: this reads a score, it does not compute one.
