@@ -196,12 +196,23 @@ class ShapeEntry:
     removal_test: Optional[str] = None
     status: Status = Status.CANDIDATE
     provenance: Provenance = Provenance.AUTHORED
+    # METHOD_SPEC section 5. A read is a marker, not a result. Confidence is
+    # a readout reported SEPARATELY from the pattern, with the level at which
+    # an operator would act on it. None means no gradient has been stated --
+    # not zero, not one. Assigning a number where none was given resolves a
+    # marker on its behalf, which is what section 5 forbids.
+    confidence: Optional[float] = None
+    comfort_threshold: Optional[float] = None
 
     def __post_init__(self) -> None:
         if self.constraint_stated and not self.constraint:
             raise ValueError("constraint_stated=True requires a constraint")
         if not self.shape_id:
             raise ValueError("shape_id must not be empty")
+        for name in ("confidence", "comfort_threshold"):
+            value = getattr(self, name)
+            if value is not None and not 0.0 <= value <= 1.0:
+                raise ValueError("%s must lie in [0.0, 1.0]" % name)
         if self.status is Status.CONSTRAINT_IDENTIFIED and not self.constraint_stated:
             # constraint_stated exists to separate an argued constraint from an
             # asserted one. Promoting on assertion alone would discard the field.

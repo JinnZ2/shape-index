@@ -201,3 +201,39 @@ constraints, and the gate vocabulary took three entries and two revisions to
 get one term. A test now asserts the current split so it cannot drift
 silently, and the question of what a structural constraint comparison would
 compare is open. It is the largest open question in the repository.
+
+`METHOD_SPEC.md` arrived. Its section 1 blocks a misapplication it says has
+been seen in AI review of this work, including in the session it was written
+in: demanding falsifiability of the method rather than of a read. Checked
+against what is committed here — the only "no falsifier" in this ecosystem is
+attached to `custody-verification-band`'s B7, which is an individual read (the
+transfer from vessel branching to economic layers), and that is claim-level and
+correct. No demand for a falsifier of the procedure was made. Recorded because
+the file says to watch for it, not because an instance was found.
+
+Two other sections do land.
+
+**Section 5 conflicts with `Status.MULTI_DOMAIN` as defined here.** Section 5
+says a read is NOT upgraded by more instances sharing the geometry without a
+checked constraint set. `MULTI_DOMAIN` is defined in `CLAUDE.md` as recurrence
+across more than one domain — that is instance count, and nothing else. All
+three entries hold it on three, seven and five instances respectively, none
+carries a removal test, and `constraint_stated=True` records that a constraint
+was argued rather than measured across the instances. So every entry in the
+index is upgraded on exactly the basis section 5 excludes. Pinned by a test
+rather than fixed: changing what `MULTI_DOMAIN` means is a status-semantics
+change touching every entry and the `CONSTRAINT_IDENTIFIED` validation, and the
+conflict should be visible before it is resolved.
+
+**Confidence was not recorded at all.** Section 5 requires it as a readout
+separate from the pattern, with a comfort threshold, and `AUDIT_CONTRACT.md`
+requires the same. `ShapeEntry` had neither field. Both added, validated to
+`[0.0, 1.0]`, and left `None` on all three entries: `None` is not zero and not
+one, and assigning a number where none was given resolves a marker on its
+behalf, which is the thing section 5 forbids. That the index carries three
+entries with no stated gradient is the reportable state.
+
+`READING_PROTOCOL.md` does not exist in either repository and is now referenced
+from four places — `SHAPE_SPEC.md` section 10, and `METHOD_SPEC.md` sections 4,
+5 and 6. The `uninstrumented` cross-reference in section 3 resolves; this one
+does not.

@@ -19,6 +19,15 @@ constraint. The index therefore records the constraint as a field. An entry
 with no identifiable constraint is weaker evidence than one with a stated
 constraint, and the schema shows that difference rather than hiding it.
 
+`METHOD_SPEC.md` is upstream of `SHAPE_SPEC.md` and states the epistemic class
+of the work: constraint-set reasoning is a METHOD, in the class of the
+scientific method and dimensional analysis, and a method is not falsifiable and
+does not need to be. The falsifiable layer is the individual read, via the
+removal test. Read it before evaluating anything here as a claim; demanding a
+falsifier of the procedure rather than of a read is a category error the file
+exists to block. File order is `METHOD_SPEC.md`, `SHAPE_SPEC.md`,
+`READING_PROTOCOL.md`.
+
 `SHAPE_SPEC.md` is upstream of this file and defines the word SHAPE: the
 constraint set a geometry is a solution to, not the geometry and not the name.
 Point at it rather than restating it. Its section 10 gives the entry
@@ -59,6 +68,7 @@ These are not preferences. Do not relax them without being asked.
 | `FALSIFIER.md` | What breaks an entry. |
 | `OPEN.md` | Stated limits and unanswered questions. |
 | `LOG.md` | Dated record of what happened, in order. |
+| `METHOD_SPEC.md` | Epistemic class of the method. Upstream of `SHAPE_SPEC.md`. |
 | `SHAPE_SPEC.md` | What the word SHAPE means. Upstream of this file. |
 | `AUDIT_CONTRACT.md` | How work is reported here. Binding on the report, as this file is on the repository. |
 
@@ -105,6 +115,10 @@ An entry is a claim about structure and is judged as one.
   notes.** A failed transfer is a measurement, not an embarrassment: port a
   shape, get a different form, and you have located a constraint that differs.
   Log it.
+- `confidence` and `comfort_threshold` are readouts reported separately from
+  the pattern, per METHOD_SPEC section 5. `None` means no gradient has been
+  stated — not zero and not one. Do not assign a number where none was given;
+  that resolves a marker on its behalf. **No entry currently states either.**
 - `status` is one of `CANDIDATE`, `MULTI_DOMAIN`, `CONSTRAINT_IDENTIFIED`,
   `BROKEN`. `CONSTRAINT_IDENTIFIED` requires `constraint_stated=True` and the
   schema enforces it: an asserted but unargued constraint is recorded on the

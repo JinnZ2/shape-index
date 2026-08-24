@@ -208,3 +208,27 @@ needs a controlled vocabulary for constraints, and the gate vocabulary took
 three entries and two revisions to yield one usable term.
 
 Tests 44 to 49.
+
+## 2026-08-22 (seventh)
+
+`METHOD_SPEC.md` installed in both repositories and wired into both `CLAUDE.md`
+files ahead of `SHAPE_SPEC.md`, per its own section 6 ordering.
+
+Audited rather than filed. Section 1's blocked misapplication was checked
+against committed text and not found: the only falsifier demand in the
+ecosystem is on `custody-verification-band`'s B7, which is an individual read,
+where section 1 says such demands belong.
+
+Section 5 conflicts with `MULTI_DOMAIN`. Instance count without a checked
+constraint set is not an upgrade, and instance count is the whole definition of
+that status. All three entries hold it on that basis with no removal test.
+Pinned by test, not resolved.
+
+Section 5's confidence readout was absent from the schema entirely.
+`confidence` and `comfort_threshold` added, range-validated, and left `None` on
+every entry — a gradient nobody stated is not a gradient of zero.
+
+`READING_PROTOCOL.md` is now referenced from four places across the two spec
+files and exists in neither repository.
+
+Tests 49 to 53.

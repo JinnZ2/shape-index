@@ -276,6 +276,49 @@ class ShapeSpecTests(unittest.TestCase):
         self.assertIn("constraint", LEXICAL_WEIGHTS)
 
 
+class MethodSpecTests(unittest.TestCase):
+    """METHOD_SPEC section 5, applied to what is actually in the index."""
+
+    def test_no_entry_states_a_confidence(self):
+        """None is not zero and not one. No gradient has been stated."""
+        for entry in ENTRIES:
+            self.assertIsNone(entry.confidence, entry.shape_id)
+            self.assertIsNone(entry.comfort_threshold, entry.shape_id)
+
+    def test_confidence_outside_the_unit_interval_is_rejected(self):
+        for bad in (-0.1, 1.1):
+            with self.assertRaises(ValueError):
+                ShapeEntry(
+                    shape_id="bad",
+                    signature=Signature("f", "s", "g", "c", "u"),
+                    constraint=None,
+                    constraint_stated=False,
+                    confidence=bad,
+                )
+
+    def test_a_stated_gradient_is_carried_unchanged(self):
+        entry = ShapeEntry(
+            shape_id="marker",
+            signature=Signature("f", "s", "g", "c", "u"),
+            constraint=None,
+            constraint_stated=False,
+            confidence=0.4,
+            comfort_threshold=0.7,
+        )
+        self.assertEqual(entry.confidence, 0.4)
+        self.assertEqual(entry.comfort_threshold, 0.7)
+
+    def test_multi_domain_currently_rests_on_instance_count(self):
+        """METHOD_SPEC 5: instance count without a checked constraint set
+        is NOT an upgrade. Every entry is MULTI_DOMAIN on exactly that basis
+        and none carries a removal test. Pinned so the conflict is visible.
+        """
+        for entry in ENTRIES:
+            self.assertEqual(entry.status, Status.MULTI_DOMAIN, entry.shape_id)
+            self.assertGreater(len(entry.instances), 1, entry.shape_id)
+            self.assertIsNone(entry.removal_test, entry.shape_id)
+
+
 class SchemaTests(unittest.TestCase):
     def test_unstated_constraint_is_allowed(self):
         entry = ShapeEntry(
