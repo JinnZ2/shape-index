@@ -3,6 +3,12 @@
 
 """Data structures for structural-shape entries.
 
+SHAPE_SPEC.md is upstream of this file. A SHAPE is the constraint set a
+geometry is a solution to -- not the geometry, not the name. This module
+records a signature, which is a geometry description, plus the constraint
+proposed to generate it. Those are different objects and the schema keeps
+them apart rather than letting the signature stand for the shape.
+
 The schema deliberately keeps an unidentified constraint as None. That is
 honest evidence, not a provisional success state.
 
@@ -27,6 +33,21 @@ class Status(str, Enum):
     MULTI_DOMAIN = "MULTI_DOMAIN"
     CONSTRAINT_IDENTIFIED = "CONSTRAINT_IDENTIFIED"
     BROKEN = "BROKEN"
+
+
+class EntryKind(str, Enum):
+    """SHAPE_SPEC section 10 classification, derived rather than declared.
+
+    SHAPE_ENTRY    carries a removal test: which constraint, if removed,
+                   changes the geometry, plus a case where that constraint is
+                   genuinely absent and the form differs.
+    GEOMETRY_NOTE  does not. Per SHAPE_SPEC section 10 this is not a shape
+                   entry and is marked as such rather than quietly counted as
+                   one. The record does not report a shape it has not tested.
+    """
+
+    SHAPE_ENTRY = "SHAPE_ENTRY"
+    GEOMETRY_NOTE = "GEOMETRY_NOTE"
 
 
 class Provenance(str, Enum):
@@ -168,6 +189,11 @@ class ShapeEntry:
     instances: Tuple[Instance, ...] = field(default_factory=tuple)
     scale: str = ""
     discriminator: str = ""
+    # SHAPE_SPEC section 4. Which constraint, if REMOVED, changes the
+    # geometry -- and a case where that constraint is genuinely absent, with
+    # the form observed to differ. None until the test has been stated; the
+    # entry is then a geometry note, not a shape entry.
+    removal_test: Optional[str] = None
     status: Status = Status.CANDIDATE
     provenance: Provenance = Provenance.AUTHORED
 
@@ -184,6 +210,13 @@ class ShapeEntry:
                 "asserted but unargued constraint stays MULTI_DOMAIN with the "
                 "constraint recorded and unpromoted"
             )
+
+    def kind(self) -> EntryKind:
+        """SHAPE_SPEC section 10. A shape entry carries a removal test."""
+
+        if self.removal_test:
+            return EntryKind.SHAPE_ENTRY
+        return EntryKind.GEOMETRY_NOTE
 
     def instrumented_instances(self) -> Tuple[Instance, ...]:
         """Instances that record their own field's filling of the slots."""

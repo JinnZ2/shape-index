@@ -163,3 +163,41 @@ Support gating is implemented as proposed. `MatchResult.verdict(layer)`
 returns UNRESOLVED below `MIN_SUPPORT = 2` comparable slots, whatever the
 score, and `explain()` prints the verdict beside the score. Scoring semantics
 are untouched: this reads a score, it does not compute one.
+
+`SHAPE_SPEC.md` arrived and the index does not meet it. Two findings, one
+marked and one recorded.
+
+**All three entries are geometry notes.** Section 10 requires a shape entry to
+carry solving-for, a constraint list, why-not-the-other-shape, and the removal
+test of section 4. The schema had no field for the removal test and no entry
+had one. `removal_test` and `ShapeEntry.kind()` were added, all three entries
+classify as `GEOMETRY_NOTE`, and a test asserts the index reports zero shape
+entries. The count is the finding; the field was added so the count could be
+taken, not so it could be filled in quickly.
+
+The constraint field is also singular where section 3 says enumerate, and
+section 3 specifically asks for the external and heterogeneous constraints —
+substrate the system did not choose — not only the ones internal to the flow
+rule. `constraint: Optional[str]` cannot hold a list and cannot mark which
+entries are internal-uniform and which are external-heterogeneous, which
+section 5 says are read differently: an external-constraint geometry is a
+transcript of terrain, not an optimum. Not changed here, because converting
+the field touches every entry and the `CONSTRAINT_IDENTIFIED` validation, and
+the marking above is the operative requirement.
+
+**The matcher implements the failure mode section 2 blocks.** Section 1 says a
+shape is the constraint set and the geometry is only its readout; section 2
+names "matching geometries across domains" as the failure mode rather than the
+method. In `match.py` the structural layer compares `gate_type`,
+`closure_mode`, `switch_direction` and `switch_periodicity` — all descriptions
+of the geometry — by identity, and the `constraint` is scored in the lexical
+layer by token overlap at weight 1.5. So two entries can score a full
+structural match while their constraints share no tokens, which is exactly a
+picture that matches and a claim that is empty.
+
+Not restructured. Moving the constraint into the structural layer means
+comparing constraints by identity, which needs a controlled vocabulary for
+constraints, and the gate vocabulary took three entries and two revisions to
+get one term. A test now asserts the current split so it cannot drift
+silently, and the question of what a structural constraint comparison would
+compare is open. It is the largest open question in the repository.

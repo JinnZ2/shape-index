@@ -184,3 +184,27 @@ Corrected in the Simulators repository; three readings of that field are left
 in its record.
 
 Tests 41 to 44.
+
+## 2026-08-22 (sixth)
+
+`SHAPE_SPEC.md` installed in this repository and in Simulators, referenced from
+both `CLAUDE.md` files. It defines SHAPE as the constraint set a geometry is a
+solution to, and the index was audited against its section 10 rather than
+filed alongside it.
+
+The index does not meet the spec. No entry carried a removal test and the
+schema had no field for one, so `removal_test` and `EntryKind` were added and
+all three entries classify as `GEOMETRY_NOTE`. Zero shape entries, asserted by
+test. The field exists so the count can be taken; filling it is a separate
+piece of work and inventing removal tests to clear the count would be the
+thing the spec is written against.
+
+Section 2's blocked misread describes `match.py`. The structural layer
+compares gate and switch descriptors, which are geometry, and the constraint
+is scored as vocabulary in the lexical layer. Two entries can therefore match
+structurally with no shared constraint at all. Recorded in OPEN.md with a test
+pinning the current split, not restructured: comparing constraints by identity
+needs a controlled vocabulary for constraints, and the gate vocabulary took
+three entries and two revisions to yield one usable term.
+
+Tests 44 to 49.
