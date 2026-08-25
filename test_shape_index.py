@@ -7,12 +7,14 @@ import re
 import unittest
 
 from shape_index.entries import (
+    ENTRIES,
     INDEPENDENCE_CREDITED_VS_JOINT,
     OCCUPIED_SET_VS_SPACE,
     SUPPLY_COUPLED_DRAW,
 )
 from shape_index.match import (
     MATCH_THRESHOLD,
+    LEXICAL_WEIGHTS,
     MIN_SUPPORT,
     STRUCTURAL_WEIGHTS,
     compare,
@@ -23,6 +25,7 @@ from shape_index.match import (
 )
 from shape_index.schema import (
     ClosureMode,
+    EntryKind,
     GateType,
     Instance,
     Provenance,
@@ -221,6 +224,99 @@ class DiscriminatorTests(unittest.TestCase):
         left = _signature("a", "b", "c", "d", "e")
         right = _signature("a", "b", "c", "d", "e")
         self.assertEqual(compare_signatures(left, right).layer("structural"), ())
+
+
+class ShapeSpecTests(unittest.TestCase):
+    """SHAPE_SPEC section 10, applied to what is actually in the index."""
+
+    def test_every_entry_is_currently_a_geometry_note(self):
+        """None of the three carries a removal test. Recorded, not hidden."""
+        for entry in ENTRIES:
+            self.assertIsNone(entry.removal_test, entry.shape_id)
+            self.assertEqual(entry.kind(), EntryKind.GEOMETRY_NOTE,
+                             entry.shape_id)
+
+    def test_the_index_reports_zero_shape_entries(self):
+        shapes = [e for e in ENTRIES if e.kind() is EntryKind.SHAPE_ENTRY]
+        self.assertEqual(shapes, [])
+
+    def test_a_removal_test_promotes_an_entry(self):
+        entry = ShapeEntry(
+            shape_id="tested",
+            signature=Signature("flow", "switch", "gate", "constant", "unit"),
+            constraint="an enclosing volume fixed in advance",
+            constraint_stated=True,
+            removal_test=(
+                "remove the enclosure: a river has no wall to build to, and "
+                "produces deltas rather than a fixed branching ratio"
+            ),
+        )
+        self.assertEqual(entry.kind(), EntryKind.SHAPE_ENTRY)
+
+    def test_an_empty_removal_test_does_not_promote(self):
+        entry = ShapeEntry(
+            shape_id="untested",
+            signature=Signature("flow", "switch", "gate", "constant", "unit"),
+            constraint=None,
+            constraint_stated=False,
+            removal_test="",
+        )
+        self.assertEqual(entry.kind(), EntryKind.GEOMETRY_NOTE)
+
+    def test_the_structural_layer_does_not_read_the_constraint(self):
+        """SHAPE_SPEC 1-2: shared geometry is not a shared shape.
+
+        The structural layer compares gate and switch descriptors, which
+        describe the geometry. The constraint -- which is what SHAPE_SPEC
+        says the shape IS -- is scored in the lexical layer by token
+        overlap. This test asserts the current state so the gap cannot
+        close silently in either direction. See OPEN.md.
+        """
+        self.assertNotIn("constraint", STRUCTURAL_WEIGHTS)
+        self.assertIn("constraint", LEXICAL_WEIGHTS)
+
+
+class MethodSpecTests(unittest.TestCase):
+    """METHOD_SPEC section 5, applied to what is actually in the index."""
+
+    def test_no_entry_states_a_confidence(self):
+        """None is not zero and not one. No gradient has been stated."""
+        for entry in ENTRIES:
+            self.assertIsNone(entry.confidence, entry.shape_id)
+            self.assertIsNone(entry.comfort_threshold, entry.shape_id)
+
+    def test_confidence_outside_the_unit_interval_is_rejected(self):
+        for bad in (-0.1, 1.1):
+            with self.assertRaises(ValueError):
+                ShapeEntry(
+                    shape_id="bad",
+                    signature=Signature("f", "s", "g", "c", "u"),
+                    constraint=None,
+                    constraint_stated=False,
+                    confidence=bad,
+                )
+
+    def test_a_stated_gradient_is_carried_unchanged(self):
+        entry = ShapeEntry(
+            shape_id="marker",
+            signature=Signature("f", "s", "g", "c", "u"),
+            constraint=None,
+            constraint_stated=False,
+            confidence=0.4,
+            comfort_threshold=0.7,
+        )
+        self.assertEqual(entry.confidence, 0.4)
+        self.assertEqual(entry.comfort_threshold, 0.7)
+
+    def test_multi_domain_currently_rests_on_instance_count(self):
+        """METHOD_SPEC 5: instance count without a checked constraint set
+        is NOT an upgrade. Every entry is MULTI_DOMAIN on exactly that basis
+        and none carries a removal test. Pinned so the conflict is visible.
+        """
+        for entry in ENTRIES:
+            self.assertEqual(entry.status, Status.MULTI_DOMAIN, entry.shape_id)
+            self.assertGreater(len(entry.instances), 1, entry.shape_id)
+            self.assertIsNone(entry.removal_test, entry.shape_id)
 
 
 class SchemaTests(unittest.TestCase):

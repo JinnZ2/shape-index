@@ -163,3 +163,95 @@ Support gating is implemented as proposed. `MatchResult.verdict(layer)`
 returns UNRESOLVED below `MIN_SUPPORT = 2` comparable slots, whatever the
 score, and `explain()` prints the verdict beside the score. Scoring semantics
 are untouched: this reads a score, it does not compute one.
+
+`SHAPE_SPEC.md` arrived and the index does not meet it. Two findings, one
+marked and one recorded.
+
+**All three entries are geometry notes.** Section 10 requires a shape entry to
+carry solving-for, a constraint list, why-not-the-other-shape, and the removal
+test of section 4. The schema had no field for the removal test and no entry
+had one. `removal_test` and `ShapeEntry.kind()` were added, all three entries
+classify as `GEOMETRY_NOTE`, and a test asserts the index reports zero shape
+entries. The count is the finding; the field was added so the count could be
+taken, not so it could be filled in quickly.
+
+The constraint field is also singular where section 3 says enumerate, and
+section 3 specifically asks for the external and heterogeneous constraints —
+substrate the system did not choose — not only the ones internal to the flow
+rule. `constraint: Optional[str]` cannot hold a list and cannot mark which
+entries are internal-uniform and which are external-heterogeneous, which
+section 5 says are read differently: an external-constraint geometry is a
+transcript of terrain, not an optimum. Not changed here, because converting
+the field touches every entry and the `CONSTRAINT_IDENTIFIED` validation, and
+the marking above is the operative requirement.
+
+**The matcher implements the failure mode section 2 blocks.** Section 1 says a
+shape is the constraint set and the geometry is only its readout; section 2
+names "matching geometries across domains" as the failure mode rather than the
+method. In `match.py` the structural layer compares `gate_type`,
+`closure_mode`, `switch_direction` and `switch_periodicity` — all descriptions
+of the geometry — by identity, and the `constraint` is scored in the lexical
+layer by token overlap at weight 1.5. So two entries can score a full
+structural match while their constraints share no tokens, which is exactly a
+picture that matches and a claim that is empty.
+
+Not restructured. Moving the constraint into the structural layer means
+comparing constraints by identity, which needs a controlled vocabulary for
+constraints, and the gate vocabulary took three entries and two revisions to
+get one term. A test now asserts the current split so it cannot drift
+silently, and the question of what a structural constraint comparison would
+compare is open. It is the largest open question in the repository.
+
+`METHOD_SPEC.md` arrived. Its section 1 blocks a misapplication it says has
+been seen in AI review of this work, including in the session it was written
+in: demanding falsifiability of the method rather than of a read. Checked
+against what is committed here — the only "no falsifier" in this ecosystem is
+attached to `custody-verification-band`'s B7, which is an individual read (the
+transfer from vessel branching to economic layers), and that is claim-level and
+correct. No demand for a falsifier of the procedure was made. Recorded because
+the file says to watch for it, not because an instance was found.
+
+Two other sections do land.
+
+**Section 5 conflicts with `Status.MULTI_DOMAIN` as defined here.** Section 5
+says a read is NOT upgraded by more instances sharing the geometry without a
+checked constraint set. `MULTI_DOMAIN` is defined in `CLAUDE.md` as recurrence
+across more than one domain — that is instance count, and nothing else. All
+three entries hold it on three, seven and five instances respectively, none
+carries a removal test, and `constraint_stated=True` records that a constraint
+was argued rather than measured across the instances. So every entry in the
+index is upgraded on exactly the basis section 5 excludes. Pinned by a test
+rather than fixed: changing what `MULTI_DOMAIN` means is a status-semantics
+change touching every entry and the `CONSTRAINT_IDENTIFIED` validation, and the
+conflict should be visible before it is resolved.
+
+**Confidence had no field.** (Framing corrected after `READING_PROTOCOL.md`:
+an unstated confidence is open, not missing. The defect was that the schema
+could not carry one even where a gradient existed. That three entries state
+none is a state, not a deficiency.) Section 5 requires it as a readout
+separate from the pattern, with a comfort threshold, and `AUDIT_CONTRACT.md`
+requires the same. `ShapeEntry` had neither field. Both added, validated to
+`[0.0, 1.0]`, and left `None` on all three entries: `None` is not zero and not
+one, and assigning a number where none was given resolves a marker on its
+behalf, which is the thing section 5 forbids. That the index carries three
+entries with no stated gradient is the reportable state.
+
+`READING_PROTOCOL.md` does not exist in either repository and is now referenced
+from four places — `SHAPE_SPEC.md` section 10, and `METHOD_SPEC.md` sections 4,
+5 and 6. The `uninstrumented` cross-reference in section 3 resolves; this one
+does not.
+
+`READING_PROTOCOL.md` installed, and with it the last of the four
+cross-references resolves. It produced one structural finding: it states that
+every repo in the ecosystem carries a falsifiable claim table, and this one did
+not. Twenty-three folders in the Simulators repository already had a
+`CLAIM_TABLE.md`; the repository that defines the word SHAPE had none, and its
+claims were scattered across `OPEN.md` and `LOG.md` where a break has nowhere
+to land. `CLAIM_TABLE.md` now carries `S1..S9`, including one withdrawn claim,
+and the refutation protocol.
+
+It also corrects a framing used one commit earlier. Unstated confidence is
+open, not absent — legibility and confidence are separate axes, and reporting
+three `None` values as a deficiency read a gradient into a document that
+declines to state one. The schema defect was real (there was no field); the
+three `None`s are not a defect.

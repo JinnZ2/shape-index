@@ -20,6 +20,7 @@ from .match import (
 )
 from .schema import (
     ClosureMode,
+    EntryKind,
     GateType,
     Instance,
     Provenance,
@@ -36,6 +37,7 @@ __all__ = [
     "OCCUPIED_SET_VS_SPACE",
     "SUPPLY_COUPLED_DRAW",
     "ClosureMode",
+    "EntryKind",
     "GateType",
     "Instance",
     "MatchResult",

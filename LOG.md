@@ -184,3 +184,74 @@ Corrected in the Simulators repository; three readings of that field are left
 in its record.
 
 Tests 41 to 44.
+
+## 2026-08-22 (sixth)
+
+`SHAPE_SPEC.md` installed in this repository and in Simulators, referenced from
+both `CLAUDE.md` files. It defines SHAPE as the constraint set a geometry is a
+solution to, and the index was audited against its section 10 rather than
+filed alongside it.
+
+The index does not meet the spec. No entry carried a removal test and the
+schema had no field for one, so `removal_test` and `EntryKind` were added and
+all three entries classify as `GEOMETRY_NOTE`. Zero shape entries, asserted by
+test. The field exists so the count can be taken; filling it is a separate
+piece of work and inventing removal tests to clear the count would be the
+thing the spec is written against.
+
+Section 2's blocked misread describes `match.py`. The structural layer
+compares gate and switch descriptors, which are geometry, and the constraint
+is scored as vocabulary in the lexical layer. Two entries can therefore match
+structurally with no shared constraint at all. Recorded in OPEN.md with a test
+pinning the current split, not restructured: comparing constraints by identity
+needs a controlled vocabulary for constraints, and the gate vocabulary took
+three entries and two revisions to yield one usable term.
+
+Tests 44 to 49.
+
+## 2026-08-22 (seventh)
+
+`METHOD_SPEC.md` installed in both repositories and wired into both `CLAUDE.md`
+files ahead of `SHAPE_SPEC.md`, per its own section 6 ordering.
+
+Audited rather than filed. Section 1's blocked misapplication was checked
+against committed text and not found: the only falsifier demand in the
+ecosystem is on `custody-verification-band`'s B7, which is an individual read,
+where section 1 says such demands belong.
+
+Section 5 conflicts with `MULTI_DOMAIN`. Instance count without a checked
+constraint set is not an upgrade, and instance count is the whole definition of
+that status. All three entries hold it on that basis with no removal test.
+Pinned by test, not resolved.
+
+Section 5's confidence readout was absent from the schema entirely.
+`confidence` and `comfort_threshold` added, range-validated, and left `None` on
+every entry — a gradient nobody stated is not a gradient of zero.
+
+`READING_PROTOCOL.md` is now referenced from four places across the two spec
+files and exists in neither repository.
+
+Tests 49 to 53.
+
+## 2026-08-22 (eighth)
+
+`READING_PROTOCOL.md` installed in both repositories and referenced from both
+`CLAUDE.md` files. All four spec files — `METHOD_SPEC`, `SHAPE_SPEC`,
+`READING_PROTOCOL`, `AUDIT_CONTRACT` — now exist in both, and the four dangling
+cross-references from the two upstream specs resolve.
+
+One structural finding. The protocol states that every repo in this ecosystem
+carries a falsifiable claim table. Twenty-three folders in Simulators had one.
+This repository did not, and its claims were spread across `OPEN.md` and
+`LOG.md`, where a reader bringing a break has nowhere to put it. That is the
+protocol's own stated failure condition: the refutation protocol only works if
+readers bring breaks. `CLAIM_TABLE.md` added, `S1..S9`, with `S4` and `S6`
+marked SUPPORTED AND UNFIXED, `S8` carrying a falsifier that may already have
+fired, and `S9` withdrawn.
+
+One framing corrected. The previous commit reported three `None` confidences as
+something missing. The protocol says an unstated confidence is open, and that
+legibility and confidence are separate axes. The schema defect was real; the
+`None`s are not one.
+
+Tests unchanged at 53. Nothing in the code moved.
