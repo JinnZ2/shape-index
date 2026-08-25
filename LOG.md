@@ -232,3 +232,26 @@ every entry — a gradient nobody stated is not a gradient of zero.
 files and exists in neither repository.
 
 Tests 49 to 53.
+
+## 2026-08-22 (eighth)
+
+`READING_PROTOCOL.md` installed in both repositories and referenced from both
+`CLAUDE.md` files. All four spec files — `METHOD_SPEC`, `SHAPE_SPEC`,
+`READING_PROTOCOL`, `AUDIT_CONTRACT` — now exist in both, and the four dangling
+cross-references from the two upstream specs resolve.
+
+One structural finding. The protocol states that every repo in this ecosystem
+carries a falsifiable claim table. Twenty-three folders in Simulators had one.
+This repository did not, and its claims were spread across `OPEN.md` and
+`LOG.md`, where a reader bringing a break has nowhere to put it. That is the
+protocol's own stated failure condition: the refutation protocol only works if
+readers bring breaks. `CLAIM_TABLE.md` added, `S1..S9`, with `S4` and `S6`
+marked SUPPORTED AND UNFIXED, `S8` carrying a falsifier that may already have
+fired, and `S9` withdrawn.
+
+One framing corrected. The previous commit reported three `None` confidences as
+something missing. The protocol says an unstated confidence is open, and that
+legibility and confidence are separate axes. The schema defect was real; the
+`None`s are not one.
+
+Tests unchanged at 53. Nothing in the code moved.

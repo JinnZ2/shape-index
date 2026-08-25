@@ -19,6 +19,11 @@ constraint. The index therefore records the constraint as a field. An entry
 with no identifiable constraint is weaker evidence than one with a stated
 constraint, and the schema shows that difference rather than hiding it.
 
+`READING_PROTOCOL.md` governs how this repository is to be read: it is a marker
+for a sensed shape, not a thesis under defense. Test the fit, extend it, or
+report where it breaks — a break is a measurement and goes in `CLAIM_TABLE.md`.
+Accepting it is as useless as rejecting it; both skip the test.
+
 `METHOD_SPEC.md` is upstream of `SHAPE_SPEC.md` and states the epistemic class
 of the work: constraint-set reasoning is a METHOD, in the class of the
 scientific method and dimensional analysis, and a method is not falsifiable and
@@ -68,6 +73,8 @@ These are not preferences. Do not relax them without being asked.
 | `FALSIFIER.md` | What breaks an entry. |
 | `OPEN.md` | Stated limits and unanswered questions. |
 | `LOG.md` | Dated record of what happened, in order. |
+| `CLAIM_TABLE.md` | Falsifiable claims about the instrument, with the refutation protocol. |
+| `READING_PROTOCOL.md` | Marker status and blocked conflations. Ecosystem-wide. |
 | `METHOD_SPEC.md` | Epistemic class of the method. Upstream of `SHAPE_SPEC.md`. |
 | `SHAPE_SPEC.md` | What the word SHAPE means. Upstream of this file. |
 | `AUDIT_CONTRACT.md` | How work is reported here. Binding on the report, as this file is on the repository. |
@@ -118,7 +125,10 @@ An entry is a claim about structure and is judged as one.
 - `confidence` and `comfort_threshold` are readouts reported separately from
   the pattern, per METHOD_SPEC section 5. `None` means no gradient has been
   stated — not zero and not one. Do not assign a number where none was given;
-  that resolves a marker on its behalf. **No entry currently states either.**
+  that resolves a marker on its behalf. Per `READING_PROTOCOL.md`, an unstated
+  confidence is **open**, not missing: legibility and confidence are separate
+  axes and a clearly written entry is not an entry held strongly. No entry
+  currently states either, and that is a state rather than a defect.
 - `status` is one of `CANDIDATE`, `MULTI_DOMAIN`, `CONSTRAINT_IDENTIFIED`,
   `BROKEN`. `CONSTRAINT_IDENTIFIED` requires `constraint_stated=True` and the
   schema enforces it: an asserted but unargued constraint is recorded on the

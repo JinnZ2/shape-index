@@ -225,7 +225,10 @@ rather than fixed: changing what `MULTI_DOMAIN` means is a status-semantics
 change touching every entry and the `CONSTRAINT_IDENTIFIED` validation, and the
 conflict should be visible before it is resolved.
 
-**Confidence was not recorded at all.** Section 5 requires it as a readout
+**Confidence had no field.** (Framing corrected after `READING_PROTOCOL.md`:
+an unstated confidence is open, not missing. The defect was that the schema
+could not carry one even where a gradient existed. That three entries state
+none is a state, not a deficiency.) Section 5 requires it as a readout
 separate from the pattern, with a comfort threshold, and `AUDIT_CONTRACT.md`
 requires the same. `ShapeEntry` had neither field. Both added, validated to
 `[0.0, 1.0]`, and left `None` on all three entries: `None` is not zero and not
@@ -237,3 +240,18 @@ entries with no stated gradient is the reportable state.
 from four places — `SHAPE_SPEC.md` section 10, and `METHOD_SPEC.md` sections 4,
 5 and 6. The `uninstrumented` cross-reference in section 3 resolves; this one
 does not.
+
+`READING_PROTOCOL.md` installed, and with it the last of the four
+cross-references resolves. It produced one structural finding: it states that
+every repo in the ecosystem carries a falsifiable claim table, and this one did
+not. Twenty-three folders in the Simulators repository already had a
+`CLAIM_TABLE.md`; the repository that defines the word SHAPE had none, and its
+claims were scattered across `OPEN.md` and `LOG.md` where a break has nowhere
+to land. `CLAIM_TABLE.md` now carries `S1..S9`, including one withdrawn claim,
+and the refutation protocol.
+
+It also corrects a framing used one commit earlier. Unstated confidence is
+open, not absent — legibility and confidence are separate axes, and reporting
+three `None` values as a deficiency read a gradient into a document that
+declines to state one. The schema defect was real (there was no field); the
+three `None`s are not a defect.
