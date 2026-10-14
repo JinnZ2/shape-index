@@ -1,3 +1,6 @@
+> Before reading or editing anything here, read [READ_ME_THIS_WAY.md](READ_ME_THIS_WAY.md).
+> Mismatches, dead ends and odd names in this repo are kept on purpose.
+
 <!-- SPDX-License-Identifier: CC0-1.0 -->
 <!-- This file is dedicated to the public domain under CC0 1.0. -->
 
